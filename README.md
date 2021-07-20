@@ -1,2 +1,2 @@
 # arch-install
-Simple installation script for Arch:
+Simple installation script for Arch.
