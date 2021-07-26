@@ -23,9 +23,15 @@ function yesno
     echo $ask
 }
 
+function getMatchLineNumber
+{
+    N=sed -n 's/$1/=' $2
+    echo $N
+}
+
 # Enable multilib and color option
 sed -i "s/#Color/Color/" /etc/pacman.conf
-sed -i "s/#[multilib]\n#Include/[multilib]\nInclude/" /etc/pacman.conf
+sed -i "s/#\[multilib\]\n#Include/\[multilib\]\nInclude = /etc/pacman.d/mirrorlist" /etc/pacman.conf
 pacman -Syu --noconfirm
 
 # Use all available cores for makepkg compilation
@@ -111,7 +117,7 @@ grub-install --target=x86_64-efi --efi-directory=/EFI --bootloader-id=arch
 
 # Set grub settings
 sed -i 's/GRUB_DEFAULT=0/GRUB_DEFAULT=saved/' /etc/default/grub
-sed -i 's/ quiet//' /etc/default/grub
+sed -i 's/quiet//' /etc/default/grub
 sed -i 's/#GRUB_SAVEDEFAULT=true/GRUB_SAVEDEFAULT=true/' /etc/default/grub
 echo '# Enable os prober
 GRUB_DISABLE_OS_PROBER=false' >> /etc/default/grub
