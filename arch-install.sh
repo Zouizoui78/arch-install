@@ -71,12 +71,26 @@ echo "Select a desktop environment :
 2- KDE"
 de=$(numchoice 1 2)
 
-packages="dkms wpa_supplicant dhcpcd grub efibootmgr os-prober ntfs-3g openssh base-devel python vim git man-db man-pages texinfo ncdu htop nmap unrar unzip i7z nss-mdns pacman-contrib rsync wget inetutils vlc qbittorrent libreoffice-still libreoffice-still-fr cups noto-fonts-emoji pulseaudio pulseaudio-alsa discord pinta nvidia-dkms nvidia-utils lib32-nvidia-utils vulkan-icd-loader lib32-vulkan-icd-loader steam lutris wine wine-mono wine-gecko"
+echo "Install gaming stuff (steam, wine, lutris) ? y/n"
+gaming=$(yesno)
+
+echo "Install nvidia driver ? y/n"
+nvidia=$(yesno)
+
+packages="dkms wpa_supplicant dhcpcd grub efibootmgr os-prober ntfs-3g openssh base-devel python vim git man-db man-pages texinfo ncdu htop nmap unrar unzip i7z nss-mdns pacman-contrib rsync wget inetutils vlc qbittorrent cups noto-fonts-emoji pulseaudio pulseaudio-alsa pinta vulkan-icd-loader lib32-vulkan-icd-loader"
 
 if [ $lts = "y" ]; then
     packages="${packages} linux-lts-headers"
 else
     packages="${packages} linux-headers"
+fi
+
+if [ $gaming = "y" ]; then
+    packages="${packages} discord steam lutris wine wine-mono wine-gecko"
+fi
+
+if [ $nvidia = "y" ]; then
+    packages="${packages} nvidia-dkms nvidia-utils lib32-nvidia-utils"
 fi
 
 case $cpu in
@@ -117,7 +131,6 @@ grub-install --target=x86_64-efi --efi-directory=/EFI --bootloader-id=arch
 
 # Set grub settings
 sed -i 's/GRUB_DEFAULT=0/GRUB_DEFAULT=saved/' /etc/default/grub
-sed -i 's/quiet//' /etc/default/grub
 sed -i 's/#GRUB_SAVEDEFAULT=true/GRUB_SAVEDEFAULT=true/' /etc/default/grub
 echo '# Enable os prober
 GRUB_DISABLE_OS_PROBER=false' >> /etc/default/grub
