@@ -6,10 +6,9 @@ fi
 
 alias ls='ls -axF --color --group-directories-first'
 alias ll='ls -lh --time-style=long-iso'
-alias grep='grep -ns --color=auto'
+alias grep='grep -s --color=auto'
 alias du='du -sh'
 alias df='df -h'
-alias python='python3'
 
 export EDITOR=vim
 export HISTSIZE=
