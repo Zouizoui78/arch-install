@@ -77,7 +77,7 @@ gaming=$(yesno)
 echo "Install nvidia driver ? y/n"
 nvidia=$(yesno)
 
-packages="dkms wpa_supplicant dhcpcd grub efibootmgr os-prober ntfs-3g openssh base-devel python vim git man-db man-pages texinfo ncdu htop nmap unrar unzip i7z nss-mdns pacman-contrib rsync wget inetutils vlc qbittorrent cups noto-fonts-emoji pulseaudio pulseaudio-alsa pinta vulkan-icd-loader lib32-vulkan-icd-loader"
+packages="dkms wpa_supplicant dhcpcd grub efibootmgr os-prober ntfs-3g openssh base-devel python vim git man-db man-pages texinfo ncdu htop nmap unrar unzip i7z nss-mdns pacman-contrib rsync wget inetutils vlc qbittorrent cups noto-fonts-emoji pulseaudio pulseaudio-alsa alsa-utils pinta vulkan-icd-loader lib32-vulkan-icd-loader"
 
 if [ $lts = "y" ]; then
     packages="${packages} linux-lts-headers"
