@@ -71,7 +71,7 @@ echo "Select a desktop environment :
 2- KDE"
 de=$(numchoice 1 2)
 
-echo "Install gaming stuff (steam, wine, lutris) ? y/n"
+echo "Install gaming stuff (steam, wine, lutris, gamemode, etc.) ? y/n"
 gaming=$(yesno)
 
 echo "Install nvidia driver ? y/n"
@@ -86,7 +86,7 @@ else
 fi
 
 if [ $gaming = "y" ]; then
-    packages="${packages} discord steam lutris wine wine-mono wine-gecko"
+    packages="${packages} discord steam lutris wine wine-mono wine-gecko gamemode lib32-gamemode"
 fi
 
 if [ $nvidia = "y" ]; then
