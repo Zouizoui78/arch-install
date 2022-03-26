@@ -137,7 +137,7 @@ GRUB_DISABLE_OS_PROBER=false' >> /etc/default/grub
 
 grub-mkconfig -o /boot/grub/grub.cfg
 
-systemctl enable cups NetworkManager fstrim.timer avahi-daemon systemd-timesyncd
+systemctl enable cups NetworkManager fstrim.timer avahi-daemon systemd-timesyncd bluetooth
 
 case $de in
     1) systemctl enable gdm;;
