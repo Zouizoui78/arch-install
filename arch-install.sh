@@ -130,6 +130,7 @@ echo "keyserver hkps://keyserver.ubuntu.com" >> /home/${username}/.gnupg/dirmngr
 grub-install --target=x86_64-efi --efi-directory=/EFI --bootloader-id=arch
 
 # Set grub settings
+sed -i 's/quiet/quiet nowatchdog/' /etc/default/grub # Disable watchdog
 sed -i 's/GRUB_DEFAULT=0/GRUB_DEFAULT=saved/' /etc/default/grub
 sed -i 's/#GRUB_SAVEDEFAULT=true/GRUB_SAVEDEFAULT=true/' /etc/default/grub
 echo '# Enable os prober
@@ -148,7 +149,10 @@ echo "blacklist pcspkr
 blacklist iTCO_wdt
 blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
 
-echo "vm.swappiness=10" > /etc/sysctl.d/99-swappiness.conf
+echo "vm.swappiness=1 # Reduce kernel's tendency to use swap
+kernel.sysrq=1 # Enable REISUB
+dirty_ratio=2
+dirty_background_ratio=1" > /etc/sysctl.d/99-sysctl.conf
 
 if [ $de -eq 2 ]; then
 echo "[General]
