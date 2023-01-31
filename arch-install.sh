@@ -151,8 +151,8 @@ blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
 
 echo "vm.swappiness=1 # Reduce kernel's tendency to use swap
 kernel.sysrq=1 # Enable REISUB
-dirty_ratio=2
-dirty_background_ratio=1" > /etc/sysctl.d/99-sysctl.conf
+vm.dirty_ratio=2
+vm.dirty_background_ratio=1" > /etc/sysctl.d/99-sysctl.conf
 
 if [ $de -eq 2 ]; then
 echo "[General]
