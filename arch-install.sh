@@ -77,7 +77,7 @@ gaming=$(yesno)
 echo "Install nvidia driver ? y/n"
 nvidia=$(yesno)
 
-packages="dkms wpa_supplicant dhcpcd grub efibootmgr os-prober kernel-modules-hook ntfs-3g openssh base-devel python vim git man-db man-pages texinfo ncdu htop nmap unrar unzip i7z nss-mdns pacman-contrib rsync wget inetutils vlc qbittorrent cups noto-fonts-emoji pulseaudio pulseaudio-alsa alsa-utils pinta vulkan-icd-loader lib32-vulkan-icd-loader"
+packages="dkms wpa_supplicant dhcpcd ntfs-3g openssh base-devel python vim git man-db man-pages texinfo ncdu htop nmap unrar unzip i7z nss-mdns pacman-contrib rsync wget inetutils vlc qbittorrent cups noto-fonts-emoji pulseaudio pulseaudio-alsa alsa-utils pinta vulkan-icd-loader lib32-vulkan-icd-loader"
 
 if [ $lts = "y" ]; then
     packages="${packages} linux-lts-headers"
@@ -105,15 +105,9 @@ esac
 
 pacman -S --needed $packages
 
-# Give root commands access to wheel group
-echo "Do you want to use sudo without password ? y/n"
-sudo=$(yesno)
-if [ $sudo = "y" ]; then
-    sed -i 's/# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
-else
-    packages="${packages} linux-headers"
-    sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
-fi
+# Give root commands access to sudo group
+groupadd sudo
+sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
 echo "Username ?"
 read username
@@ -127,16 +121,12 @@ chown -R ${username}:${username} /home/${username}/.gnupg
 chmod -R u+rwX,g-rwx,o-rwx /home/${username}/.gnupg
 echo "keyserver hkps://keyserver.ubuntu.com" >> /home/${username}/.gnupg/dirmngr.conf
 
-grub-install --target=x86_64-efi --efi-directory=/EFI --bootloader-id=arch
+# Install systemd-boot's efi boot manager
+bootctl install
 
-# Set grub settings
-sed -i 's/quiet/quiet nowatchdog/' /etc/default/grub # Disable watchdog
-sed -i 's/GRUB_DEFAULT=0/GRUB_DEFAULT=saved/' /etc/default/grub
-sed -i 's/#GRUB_SAVEDEFAULT=true/GRUB_SAVEDEFAULT=true/' /etc/default/grub
-echo '# Enable os prober
-GRUB_DISABLE_OS_PROBER=false' >> /etc/default/grub
-
-grub-mkconfig -o /boot/grub/grub.cfg
+# Copy our systemd boot configuration
+# It should automatically find existing Windows install
+cp -r boot /
 
 systemctl enable cups NetworkManager fstrim.timer avahi-daemon systemd-timesyncd bluetooth
 
@@ -149,10 +139,7 @@ echo "blacklist pcspkr
 blacklist iTCO_wdt
 blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
 
-echo "vm.swappiness=1 # Reduce kernel's tendency to use swap
-kernel.sysrq=1 # Enable REISUB
-vm.dirty_ratio=2
-vm.dirty_background_ratio=1" > /etc/sysctl.d/99-sysctl.conf
+echo "kernel.sysrq=1 # Enable REISUB" > /etc/sysctl.d/99-sysctl.conf
 
 if [ $de -eq 2 ]; then
 echo "[General]
@@ -163,4 +150,4 @@ ServerArguments=-dpi 96" > /etc/sddm.conf
 fi
 
 cat bash.bashrc >> /etc/bash.bashrc
-cp vimrc /etc/vimrc
+cp -r etc /
