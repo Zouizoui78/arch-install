@@ -23,12 +23,6 @@ function yesno
     echo $ask
 }
 
-function getMatchLineNumber
-{
-    N=sed -n 's/$1/=' $2
-    echo $N
-}
-
 # Enable multilib and color option
 sed -i "s/#Color/Color/" /etc/pacman.conf
 sed -i "s/#\[multilib\]/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /etc/pacman.conf
@@ -55,7 +49,7 @@ echo "127.0.0.1 localhost" > /etc/hosts
 echo "::1 localhost" >> /etc/hosts
 echo "127.0.1.1 $hostname.localdomain $hostname" >> /etc/hosts
 
-echo "Root password"
+echo "Root password ?"
 passwd
 
 echo "Select your CPU brand :
@@ -71,26 +65,28 @@ echo "Select a desktop environment :
 2- KDE"
 de=$(numchoice 1 2)
 
-echo "Install gaming stuff (steam, wine, lutris, gamemode, etc.) ? y/n"
-gaming=$(yesno)
+# base (needed for a somewhat usable system)
+packages="sudo dkms vim man-db man-pages texinfo"
 
-echo "Install nvidia driver ? y/n"
-nvidia=$(yesno)
+# networking
+packages="${packages} networkmanager openssh nmap nss-mdns"
 
-packages="dkms wpa_supplicant dhcpcd ntfs-3g openssh base-devel python vim git man-db man-pages texinfo ncdu htop nmap unrar unzip i7z nss-mdns pacman-contrib rsync wget inetutils vlc qbittorrent cups noto-fonts-emoji pulseaudio pulseaudio-alsa alsa-utils pinta vulkan-icd-loader lib32-vulkan-icd-loader"
+# audio
+packages="${packages} pipewire lib32-pipewire pipewire-audio pipewire-alsa pipewire-pulse pipewire-jack lib32-pipewire-jack"
+
+# fonts
+packages="${packages} noto-fonts noto-fonts-cjk noto-fonts-emoji"
+
+# useful stuff
+packages="${packages} base-devel git python unrar unzip i7z ncdu htop pacman-contrib rsync wget vlc qbittorrent cups pinta"
+
+# dev
+packages="${packages} gcc make cmake"
 
 if [ $lts = "y" ]; then
     packages="${packages} linux-lts-headers"
 else
     packages="${packages} linux-headers"
-fi
-
-if [ $gaming = "y" ]; then
-    packages="${packages} discord steam lutris wine wine-mono wine-gecko gamemode lib32-gamemode"
-fi
-
-if [ $nvidia = "y" ]; then
-    packages="${packages} nvidia-dkms nvidia-utils lib32-nvidia-utils"
 fi
 
 case $cpu in
@@ -99,27 +95,23 @@ case $cpu in
 esac
 
 case $de in
+    # gnome
     1) packages="${packages} baobab eog evince file-roller gdm gedit gnome-boxes gnome-calculator gnome-characters gnome-control-center gnome-disk-utility gnome-keyring seahorse gnome-logs dconf-editor gnome-menus gnome-remote-desktop gnome-screenshot gnome-session gnome-settings-daemon gnome-shell gnome-shell-extensions gnome-system-monitor gnome-terminal gnome-themes-extra gnome-user-docs gnome-video-effects gvfs gvfs-goa mutter nautilus networkmanager simple-scan tracker3 tracker3-miners xdg-user-dirs-gtk gnome-sound-recorder gnome-tweaks gnome-connections gnome-usage";;
-    2) packages="${packages} breeze breeze-gtk drkonqi kactivitymanagerd kde-cli-tools kde-gtk-config kdecoration kdeplasma-addons kgamma5 khotkeys kinfocenter kmenuedit kscreen kscreenlocker ksysguard kwallet-pam kwayland-integration kwayland-server kwin kwrited libkscreen libksysguard milou plasma-browser-integration plasma-desktop plasma-disks plasma-firewall plasma-integration plasma-nm plasma-pa plasma-systemmonitor plasma-workspace polkit-kde-agent powerdevil sddm-kcm systemsettings xdg-desktop-portal-kde skanlite ark dolphin gwenview kcalc kfind kompare konsole krdc krfb ksystemlog kwalletmanager okular partitionmanager spectacle kdialog yakuake sddm";;
+    # kde
+    2) packages="${packages} breeze breeze-gtk drkonqi kde-gtk-config kdeplasma-addons kinfocenter kpipewire kscreen kscreenlocker kwallet-pam kwin plasma-desktop plasma-nm plasma-pa polkit-kde-agent print-manager sddm-kcm systemsettings xdg-desktop-portal-kde gwenview skanlite spectacle dolphin ark kcalc kwrite kfind konsole kwalletmanager";;
 esac
 
 pacman -S --needed $packages
 
 # Give root commands access to sudo group
 groupadd sudo
-sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
+sed -i 's/# %sudo/%sudo' /etc/sudoers
 
 echo "Username ?"
 read username
-useradd -m $username --groups wheel,adm,ftp,games,http,log,rfkill,sys,audio,scanner,storage,video,input
-echo "$username password"
+useradd -m $username --groups sudo,adm,ftp,games,http,log,rfkill,sys,audio,scanner,storage,video,input
+echo "$username password ?"
 passwd $username
-
-# Change pgp server for one that is more reliable than the default one.
-mkdir -p /home/${username}/.gnupg
-chown -R ${username}:${username} /home/${username}/.gnupg
-chmod -R u+rwX,g-rwx,o-rwx /home/${username}/.gnupg
-echo "keyserver hkps://keyserver.ubuntu.com" >> /home/${username}/.gnupg/dirmngr.conf
 
 # Install systemd-boot's efi boot manager
 bootctl install
@@ -128,25 +120,37 @@ bootctl install
 # It should automatically find existing Windows install
 cp -r boot /
 
-systemctl enable cups NetworkManager fstrim.timer avahi-daemon systemd-timesyncd bluetooth
+# Set ucode branc in boot config
+case $cpu in
+    1) sed -i 's/CPU_BRAND/amd' /boot/loader/entries/arch.conf;;
+    2) sed -i 's/CPU_BRAND/intel' /boot/loader/entries/arch.conf;;
+esac
+
+# Set root UUID in boot config
+sed -i 's/ROOT_UUID/`findmnt --output=UUID --noheadings --target=/`' /boot/loader/entries/arch.conf
+
+systemctl enable cups NetworkManager fstrim.timer avahi-daemon systemd-timesyncd bluetooth pipewire-pulse
+
+# Set avahi conf
+sed -i 's/hosts:.*/hosts: mymachines mdns_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns' /etc/nsswitch.conf
 
 case $de in
     1) systemctl enable gdm;;
     2) systemctl enable sddm;;
 esac
 
-echo "blacklist pcspkr
-blacklist iTCO_wdt
-blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
+echo "blacklist pcspkr" >> /etc/modprobe.d/blacklist.conf
+case $cpu in
+    1) echo "blacklist sp5100_tco" >> /etc/modprobe.d/blacklist.conf;;
+    2) echo "blacklist iTCO_wdt" >> /etc/modprobe.d/blacklist.conf;;
+esac
 
 echo "kernel.sysrq=1 # Enable REISUB" > /etc/sysctl.d/99-sysctl.conf
 
 if [ $de -eq 2 ]; then
 echo "[General]
 Numlock=on
-
-[X11]
-ServerArguments=-dpi 96" > /etc/sddm.conf
+" > /etc/sddm.conf
 fi
 
 cat bash.bashrc >> /etc/bash.bashrc
