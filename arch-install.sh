@@ -26,6 +26,7 @@ function yesno
 # Enable multilib and color option
 sed -i "s/#Color/Color/" /etc/pacman.conf
 sed -i "s/#\[multilib\]/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /etc/pacman.conf
+sed -i "S/#Parallel/Parallel/" /etc/pacman.conf
 pacman -Syu --noconfirm
 
 # Use all available cores for makepkg compilation
@@ -98,14 +99,14 @@ case $de in
     # gnome
     1) packages="${packages} baobab eog evince file-roller gdm gedit gnome-boxes gnome-calculator gnome-characters gnome-control-center gnome-disk-utility gnome-keyring seahorse gnome-logs dconf-editor gnome-menus gnome-remote-desktop gnome-screenshot gnome-session gnome-settings-daemon gnome-shell gnome-shell-extensions gnome-system-monitor gnome-terminal gnome-themes-extra gnome-user-docs gnome-video-effects gvfs gvfs-goa mutter nautilus networkmanager simple-scan tracker3 tracker3-miners xdg-user-dirs-gtk gnome-sound-recorder gnome-tweaks gnome-connections gnome-usage";;
     # kde
-    2) packages="${packages} breeze breeze-gtk drkonqi kde-gtk-config kdeplasma-addons kinfocenter kpipewire kscreen kscreenlocker kwallet-pam kwin plasma-desktop plasma-nm plasma-pa polkit-kde-agent print-manager sddm-kcm systemsettings xdg-desktop-portal-kde gwenview skanlite spectacle dolphin ark kcalc kwrite kfind konsole kwalletmanager";;
+    2) packages="${packages} bluedevil breeze breeze-gtk drkonqi kde-gtk-config kdeplasma-addons kinfocenter kpipewire kscreen kscreenlocker kwallet-pam kwin plasma-desktop plasma-nm plasma-pa polkit-kde-agent print-manager sddm-kcm systemsettings xdg-desktop-portal-kde gwenview skanlite spectacle dolphin ark kcalc kwrite kfind konsole kwalletmanager";;
 esac
 
 pacman -S --needed $packages
 
 # Give root commands access to sudo group
 groupadd sudo
-sed -i 's/# %sudo/%sudo' /etc/sudoers
+sed -i 's/# %sudo/%sudo/' /etc/sudoers
 
 echo "Username ?"
 read username
@@ -122,17 +123,17 @@ cp -r boot /
 
 # Set ucode branc in boot config
 case $cpu in
-    1) sed -i 's/CPU_BRAND/amd' /boot/loader/entries/arch.conf;;
-    2) sed -i 's/CPU_BRAND/intel' /boot/loader/entries/arch.conf;;
+    1) sed -i 's/CPU_BRAND/amd/' /boot/loader/entries/arch.conf;;
+    2) sed -i 's/CPU_BRAND/intel/' /boot/loader/entries/arch.conf;;
 esac
 
 # Set root UUID in boot config
-sed -i 's/ROOT_UUID/`findmnt --output=UUID --noheadings --target=/`' /boot/loader/entries/arch.conf
+sed -i 's/ROOT_UUID/`findmnt --output=UUID --noheadings --target=/`/' /boot/loader/entries/arch.conf
 
 systemctl enable cups NetworkManager fstrim.timer avahi-daemon systemd-timesyncd bluetooth pipewire-pulse
 
 # Set avahi conf
-sed -i 's/hosts:.*/hosts: mymachines mdns_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns' /etc/nsswitch.conf
+sed -i 's/hosts:.*/hosts: mymachines mdns_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/' /etc/nsswitch.conf
 
 case $de in
     1) systemctl enable gdm;;
