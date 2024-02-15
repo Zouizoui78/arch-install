@@ -26,7 +26,7 @@ function yesno
 # Enable multilib and color option
 sed -i "s/#Color/Color/" /etc/pacman.conf
 sed -i "s/#\[multilib\]/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /etc/pacman.conf
-sed -i "S/#Parallel/Parallel/" /etc/pacman.conf
+sed -i "s/#Parallel/Parallel/" /etc/pacman.conf
 pacman -Syu --noconfirm
 
 # Use all available cores for makepkg compilation
@@ -133,7 +133,7 @@ sed -i 's/ROOT_UUID/`findmnt --output=UUID --noheadings --target=/`/' /boot/load
 systemctl enable cups NetworkManager fstrim.timer avahi-daemon systemd-timesyncd bluetooth pipewire-pulse
 
 # Set avahi conf
-sed -i 's/hosts:.*/hosts: mymachines mdns_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/' /etc/nsswitch.conf
+sed -i 's/hosts:.*/hosts: mymachines mdns_minimal \[NOTFOUND=return\] resolve \[!UNAVAIL=return\] files myhostname dns/' /etc/nsswitch.conf
 
 case $de in
     1) systemctl enable gdm;;
