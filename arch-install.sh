@@ -79,7 +79,7 @@ packages="${packages} pipewire lib32-pipewire pipewire-audio pipewire-alsa pipew
 packages="${packages} noto-fonts noto-fonts-cjk noto-fonts-emoji"
 
 # useful stuff
-packages="${packages} base-devel git python unrar unzip i7z ncdu htop pacman-contrib rsync wget vlc qbittorrent cups pinta"
+packages="${packages} base-devel git python unrar unzip i7z ncdu htop pacman-contrib firefox rsync wget vlc qbittorrent cups pinta"
 
 # dev
 packages="${packages} gcc make cmake"
@@ -106,7 +106,7 @@ pacman -S --needed $packages
 
 # Give root commands access to sudo group
 groupadd sudo
-sed -i 's/# %sudo/%sudo/' /etc/sudoers
+sed -i "s/# %sudo/%sudo/" /etc/sudoers
 
 echo "Username ?"
 read username
@@ -123,17 +123,18 @@ cp -r boot /
 
 # Set ucode branc in boot config
 case $cpu in
-    1) sed -i 's/CPU_BRAND/amd/' /boot/loader/entries/arch.conf;;
-    2) sed -i 's/CPU_BRAND/intel/' /boot/loader/entries/arch.conf;;
+    1) sed -i "s/CPU_BRAND/amd/" /boot/loader/entries/arch.conf;;
+    2) sed -i "s/CPU_BRAND/intel/" /boot/loader/entries/arch.conf;;
 esac
 
 # Set root UUID in boot config
-sed -i 's/ROOT_UUID/`findmnt --output=UUID --noheadings --target=/`/' /boot/loader/entries/arch.conf
+root_uuid=$(findmnt --output=UUID --noheadings --target=/)
+sed -i "s/ROOT_UUID/$root_uuid/" /boot/loader/entries/arch.conf
 
-systemctl enable cups NetworkManager fstrim.timer avahi-daemon systemd-timesyncd bluetooth pipewire-pulse
+systemctl enable cups NetworkManager fstrim.timer avahi-daemon systemd-timesyncd bluetooth
 
 # Set avahi conf
-sed -i 's/hosts:.*/hosts: mymachines mdns_minimal \[NOTFOUND=return\] resolve \[!UNAVAIL=return\] files myhostname dns/' /etc/nsswitch.conf
+sed -i "s/hosts:.*/hosts: mymachines mdns_minimal \[NOTFOUND=return\] resolve \[!UNAVAIL=return\] files myhostname dns/" /etc/nsswitch.conf
 
 case $de in
     1) systemctl enable gdm;;
