@@ -99,7 +99,7 @@ case $de in
     # gnome
     1) packages="${packages} baobab eog evince file-roller gdm gedit gnome-boxes gnome-calculator gnome-characters gnome-control-center gnome-disk-utility gnome-keyring seahorse gnome-logs dconf-editor gnome-menus gnome-remote-desktop gnome-screenshot gnome-session gnome-settings-daemon gnome-shell gnome-shell-extensions gnome-system-monitor gnome-terminal gnome-themes-extra gnome-user-docs gnome-video-effects gvfs gvfs-goa mutter nautilus networkmanager simple-scan tracker3 tracker3-miners xdg-user-dirs-gtk gnome-sound-recorder gnome-tweaks gnome-connections gnome-usage";;
     # kde
-    2) packages="${packages} bluedevil breeze breeze-gtk drkonqi kde-gtk-config kdeplasma-addons kinfocenter kpipewire kscreen kscreenlocker kwallet-pam kwin plasma-desktop plasma-nm plasma-pa polkit-kde-agent print-manager sddm-kcm systemsettings xdg-desktop-portal-kde gwenview skanlite spectacle dolphin ark kcalc kwrite kfind konsole kwalletmanager";;
+    2) packages="${packages} bluedevil breeze breeze-gtk drkonqi kde-gtk-config kdeplasma-addons khotkeys kinfocenter kpipewire kscreen kscreenlocker kwallet-pam kwin plasma-desktop plasma-nm plasma-pa polkit-kde-agent print-manager sddm-kcm systemsettings xdg-desktop-portal-kde gwenview skanlite spectacle dolphin ark kcalc kwrite kfind konsole kwalletmanager";;
 esac
 
 pacman -S --needed $packages
