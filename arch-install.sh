@@ -79,7 +79,7 @@ packages="${packages} pipewire lib32-pipewire pipewire-audio pipewire-alsa pipew
 packages="${packages} noto-fonts noto-fonts-cjk noto-fonts-emoji"
 
 # useful stuff
-packages="${packages} base-devel git python unrar unzip i7z ncdu htop pacman-contrib firefox rsync wget vlc qbittorrent cups pinta"
+packages="${packages} base-devel git python unrar unzip i7z ncdu htop nvtop pacman-contrib firefox rsync wget vlc qbittorrent cups pinta"
 
 # dev
 packages="${packages} gcc make cmake"
