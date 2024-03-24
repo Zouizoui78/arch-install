@@ -70,7 +70,7 @@ de=$(numchoice 1 2)
 packages="sudo dkms vim man-db man-pages texinfo"
 
 # networking
-packages="${packages} networkmanager openssh nmap nss-mdns wireguard-tools"
+packages="${packages} networkmanager openssh nmap nss-mdns wireguard-tools ethtool"
 
 # audio
 packages="${packages} pipewire lib32-pipewire pipewire-audio pipewire-alsa pipewire-pulse pipewire-jack lib32-pipewire-jack"
