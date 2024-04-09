@@ -79,7 +79,7 @@ packages="${packages} pipewire lib32-pipewire pipewire-audio pipewire-alsa pipew
 packages="${packages} noto-fonts noto-fonts-cjk noto-fonts-emoji"
 
 # useful stuff
-packages="${packages} git pyenv zip unrar unzip p7zip ncdu htop nvtop pacman-contrib firefox rsync wget vlc qbittorrent cups pinta libdbusmenu-glib reflector ntfs-3g screen"
+packages="${packages} git pyenv zip unrar unzip p7zip ncdu htop nvtop pacman-contrib firefox rsync wget vlc qbittorrent cups pinta libdbusmenu-glib reflector ntfs-3g screen fuse2"
 
 # dev
 packages="${packages} base-devel cmake"
