@@ -26,7 +26,6 @@ function yesno
 # Enable multilib and color option
 sed -i "s/#Color/Color/" /etc/pacman.conf
 sed -i "s/#\[multilib\]/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /etc/pacman.conf
-sed -i "s/#Parallel/Parallel/" /etc/pacman.conf
 pacman -Syu --noconfirm
 
 # Use all available cores for makepkg compilation
