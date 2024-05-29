@@ -7,9 +7,6 @@ fi
 alias ls='ls -axF --color --group-directories-first'
 alias ll='ls -lh --time-style=long-iso'
 alias grep='grep -s --color=auto'
-alias du='du -sh'
-alias df='df -h'
-alias syu='sudo pacman -Syu'
 
 export EDITOR=vim
 export HISTSIZE=
