@@ -103,13 +103,11 @@ esac
 
 pacman -S --needed $packages
 
-# Give root commands access to sudo group
-groupadd sudo
-sed -i "s/# %sudo/%sudo/" /etc/sudoers
+sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
 
 echo "Username ?"
 read username
-useradd -m $username --groups sudo,adm,ftp,games,http,log,rfkill,sys,audio,scanner,storage,video,input
+useradd -m $username --groups wheel,adm,ftp,games,http,log,rfkill,sys,audio,scanner,storage,video,input
 echo "$username password ?"
 passwd $username
 
