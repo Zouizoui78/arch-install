@@ -128,7 +128,10 @@ esac
 root_uuid=$(findmnt --output=UUID --noheadings --target=/)
 sed -i "s/ROOT_UUID/$root_uuid/" /boot/loader/entries/arch.conf
 
-systemctl enable cups NetworkManager fstrim.timer avahi-daemon systemd-timesyncd bluetooth
+# Set reflector country setting
+sed -i "s/# --country France,Germany/--country France,Germany/" /etc/xdg/reflector/reflector.conf
+
+systemctl enable cups NetworkManager fstrim.timer avahi-daemon systemd-timesyncd bluetooth reflector
 
 # Set avahi conf
 sed -i "s/hosts:.*/hosts: mymachines mdns_minimal \[NOTFOUND=return\] resolve \[!UNAVAIL=return\] files myhostname dns/" /etc/nsswitch.conf
