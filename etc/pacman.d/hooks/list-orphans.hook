@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Remove
+Operation = Upgrade
+Type = Package
+Target = *
+
+[Action]
+Description = List orphan packages
+When = PostTransaction
+Exec = /usr/bin/bash -c "/usr/bin/pacman -Qdt || /usr/bin/echo '=> None found.'"
