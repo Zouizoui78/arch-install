@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euxo pipefail
+set -euo pipefail
 
 function numchoice
 {
@@ -27,11 +27,13 @@ function yesno
 
 function loop_until_success
 {
+    unset -e
     eval $1
     while [ $? -ne 0 ];
     do
         eval $1
     done
+    set -e
 }
 
 cp -r etc /
