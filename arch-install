@@ -152,6 +152,7 @@ esac
 pacman -Syu --needed $packages
 
 genfstab -U / > /etc/fstab
+sed -i "s/relatime/noatime/" /etc/fstab
 
 sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
 
