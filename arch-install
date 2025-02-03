@@ -21,10 +21,12 @@ function numchoice
 
 function yesno
 {
+    set +u
     while [ -z $ask ] || ([ $ask != "y" ] && [ $ask != "n" ]); do
         read ask
     done
     echo $ask
+    set -u
 }
 
 function loop_until_success
