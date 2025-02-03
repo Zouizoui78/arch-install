@@ -145,7 +145,7 @@ esac
 
 pacman -Syu --needed $packages
 
-genfstab -U /mnt > /etc/fstab
+genfstab -U / > /etc/fstab
 
 # Set reflector country setting
 sed -i "s/# --country France,Germany/--country France,Germany/" /etc/xdg/reflector/reflector.conf
