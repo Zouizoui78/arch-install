@@ -77,8 +77,6 @@ cpu=$(numchoice 1 2)
 echo "Did you install the linux-lts kernel ? y/n"
 lts=$(yesno)
 
-sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
-
 # Install systemd-boot's efi boot manager
 bootctl install
 
@@ -146,6 +144,8 @@ esac
 pacman -Syu --needed $packages
 
 genfstab -U / > /etc/fstab
+
+sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
 
 # Set reflector country setting
 sed -i "s/# --country France,Germany/--country France,Germany/" /etc/xdg/reflector/reflector.conf
