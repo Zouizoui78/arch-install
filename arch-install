@@ -112,7 +112,7 @@ echo "kernel.sysrq=1 # Enable REISUB" > /etc/sysctl.d/99-sysctl.conf
 cat bash.bashrc >> /etc/bash.bashrc
 
 # base
-packages="dkms fuse2 htop libdbusmenu-glib man-db man-pages ncdu ntfs-3g nvtop p7zip pacman-contrib pyenv reflector rsync screen sudo texinfo unrar unzip vim wget zip"
+packages="arch-install-scripts dkms fuse2 htop libdbusmenu-glib man-db man-pages ncdu ntfs-3g nvtop p7zip pacman-contrib pyenv reflector rsync screen sudo texinfo unrar unzip vim wget zip"
 
 # networking
 packages="${packages} networkmanager openssh nmap nss-mdns wireguard-tools ethtool"
@@ -144,6 +144,8 @@ case $cpu in
 esac
 
 pacman -Syu --needed $packages
+
+genfstab -U /mnt > /etc/fstab
 
 # Set reflector country setting
 sed -i "s/# --country France,Germany/--country France,Germany/" /etc/xdg/reflector/reflector.conf
