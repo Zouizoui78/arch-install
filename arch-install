@@ -11,10 +11,12 @@ function numchoice
     if ! [[ $1 =~ $re ]] || ! [[ $2 =~ $re ]] ; then
         exit 1
     fi
+    set +u
     while [ -z $ask ] || ! [[ $ask =~ $re ]] || [ $ask -lt $1 ] || [ $ask -gt $2 ] ; do
         read ask
     done
     echo $ask
+    set -u
 }
 
 function yesno
