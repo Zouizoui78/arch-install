@@ -27,7 +27,7 @@ function yesno
 
 function loop_until_success
 {
-    unset -e
+    set +e
     eval $1
     while [ $? -ne 0 ];
     do
