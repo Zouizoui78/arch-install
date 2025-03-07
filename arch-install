@@ -136,7 +136,7 @@ packages="${packages} firefox vlc qbittorrent cups pinta"
 packages="${packages} base-devel git cmake"
 
 # KDE apps
-packages="${packages} ark bluedevil breeze breeze-gtk dolphin drkonqi gwenview kcalc kde-gtk-config kdeplasma-addons kfind kinfocenter konsole kpipewire kscreen kscreenlocker kwallet-pam kwalletmanager kwin kwrite plasma-desktop plasma-nm plasma-pa polkit-kde-agent print-manager sddm-kcm skanlite spectacle systemsettings xdg-desktop-portal-kde"
+packages="${packages} ark bluedevil breeze breeze-gtk dolphin drkonqi gwenview kcalc kde-gtk-config kdeplasma-addons kfind kinfocenter konsole kpipewire kscreen kscreenlocker kwallet-pam kwalletmanager kwin kwrite plasma-desktop plasma-nm plasma-pa polkit-kde-agent print-manager sddm-kcm spectacle systemsettings xdg-desktop-portal-kde"
 
 if [ $lts = "y" ]; then
     packages="${packages} linux-lts-headers"
