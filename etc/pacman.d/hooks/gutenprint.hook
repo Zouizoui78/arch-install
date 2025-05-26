@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = *gutenprint*
+
+[Action]
+Description = Running cups-genppdupdate and restarting CUPS
+When = PostTransaction
+Exec = /usr/bin/bash -c "/usr/bin/cups-genppdupdate && /usr/bin/systemctl restart cups.service"
