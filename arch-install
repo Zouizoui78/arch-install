@@ -124,7 +124,7 @@ packages="arch-install-scripts dkms fuse2 htop libdbusmenu-glib man-db man-pages
 packages="${packages} networkmanager openssh nmap nss-mdns wireguard-tools ethtool"
 
 # audio
-packages="${packages} pipewire lib32-pipewire pipewire-audio pipewire-alsa pipewire-pulse pipewire-jack lib32-pipewire-jack"
+packages="${packages} pipewire lib32-pipewire pipewire-audio pipewire-alsa pipewire-pulse pipewire-jack lib32-pipewire-jack wireplumber"
 
 # fonts
 packages="${packages} noto-fonts noto-fonts-cjk noto-fonts-emoji"
