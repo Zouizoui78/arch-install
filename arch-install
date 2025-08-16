@@ -163,6 +163,10 @@ sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
 sed -i "s/# --country France,Germany/--country France,Germany/" /etc/xdg/reflector/reflector.conf
 
 # Set avahi conf
-sed -i "s/hosts:.*/hosts: mymachines mdns_minimal \[NOTFOUND=return\] resolve \[!UNAVAIL=return\] files myhostname dns/" /etc/nsswitch.conf
+# sed -i "s/hosts:.*/hosts: mymachines mdns_minimal \[NOTFOUND=return\] resolve \[!UNAVAIL=return\] files myhostname dns/" /etc/nsswitch.conf
 
-systemctl enable avahi-daemon bluetooth cups fstrim.timer NetworkManager reflector.timer sddm systemd-timesyncd
+# Setup DNS with systemd-resolved and NetworkManager
+rm /etc/resolv.conf
+ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+
+systemctl enable bluetooth cups fstrim.timer NetworkManager reflector.timer sddm systemd-resolved systemd-timesyncd
