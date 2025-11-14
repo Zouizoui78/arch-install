@@ -59,6 +59,8 @@ locale-gen
 
 echo "LANG=en_DK.UTF-8" > /etc/locale.conf
 
+localectl set-x11-keymap fr
+
 echo "Hostname ?"
 read hostname
 echo $hostname > /etc/hostname
