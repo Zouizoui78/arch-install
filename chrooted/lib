@@ -41,13 +41,13 @@ function loop_until_success
 function get_cpu_brand
 {
     lscpu | grep -qe "Model name:.*AMD"
-    if [ $? ]; then
+    if [ $? -eq 0 ]; then
         echo "amd"
         return 0
     fi
 
     lscpu | grep -qe "Model name:.*Intel"
-    if [ $? ]; then
+    if [ $? -eq 0 ]; then
         echo "intel"
     fi
 }
