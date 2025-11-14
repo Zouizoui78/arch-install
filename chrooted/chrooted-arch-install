@@ -87,7 +87,7 @@ systemd-cryptenroll $LUKS_PART_PATH --wipe-slot=empty --tpm2-device=auto --tpm2-
 
 # pacman config
 sed -i "s/#Color/Color/" /etc/pacman.conf
-sed -i 's$#[multilib]\n#Include = /etc/pacman.d/mirrorlist$[multilib]nInclude = /etc/pacman.d/mirrorlist$' /etc/pacman.conf
+sed -i "s/#[multilib]\n#Include = \/etc\/pacman.d\/mirrorlist/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /etc/pacman.conf
 
 # Use all available cores for aur packages compilation
 sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'$(nproc)'"/' /etc/makepkg.conf
