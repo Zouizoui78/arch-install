@@ -5,6 +5,10 @@ set -exou pipefail
 echo "Which disk to install on ?"
 read DISK
 
+# Simulates manual inputs to fdisk
+# The sed command strips the comment
+# Blank lines use the default option
+# Taken from https://superuser.com/a/984637
 sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk "$DISK"
     g # new GPT partition table
     n # new partition
