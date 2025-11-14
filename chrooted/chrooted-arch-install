@@ -16,13 +16,21 @@ echo "en_DK.UTF-8 UTF-8" > /etc/locale.gen
 locale-gen
 echo "LANG=en_DK.UTF-8" > /etc/locale.conf
 
+# Set fr keymap for x11 stuff like sddm
+localectl set-x11-keymap fr
+
 # Set hostname
 echo "Hostname ?"
 read hostname
 echo $hostname > /etc/hostname
 
-# Set fr keymap for x11 stuff like sddm
-localectl set-x11-keymap fr
+# Create user account
+echo "Username ?"
+read username
+# See groups here https://wiki.archlinux.org/title/Users_and_groups#User_groups
+useradd -m $username --groups adm,log,rfkill,sys
+echo "$username password ?"
+loop_until_success "passwd $username"
 
 # Configure mkinitcpio
 sed -i "s/^HOOK.*$/HOOKS=(systemd autodetect microcode modconf keyboard sd-vconsole block sd-encrypt filesystems fsck)/" /etc/mkinitcpio.conf
@@ -49,14 +57,6 @@ bootctl install
 set +e
 mkinitcpio -P
 set -e
-
-# Create user account
-echo "Username ?"
-read username
-# See groups here https://wiki.archlinux.org/title/Users_and_groups#User_groups
-useradd -m $username --groups adm,log,rfkill,sys
-echo "$username password ?"
-loop_until_success "passwd $username"
 
 
 ### From this point the computer should boot and be usable
