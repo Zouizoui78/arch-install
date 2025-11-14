@@ -95,10 +95,10 @@ sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'$(nproc)'"/' /etc/makepkg.conf
 echo "kernel.sysrq=1 # Enable REISUB" > /etc/sysctl.d/99-sysctl.conf
 
 # base
-packages="$(get_cpu_brand)-ucode arch-install-scripts fuse2 htop libdbusmenu-glib man-db man-pages ncdu ntfs-3g nvtop p7zip pacman-contrib pyenv reflector rsync screen texinfo unrar unzip vim wget zip"
+packages="$(get_cpu_brand)-ucode fuse2 htop libdbusmenu-glib man-db man-pages ncdu nvtop p7zip pacman-contrib pyenv reflector rsync screen texinfo unrar unzip vim wget zip"
 
 # networking
-packages="${packages} networkmanager openssh nmap nss-mdns wireguard-tools ethtool"
+packages="${packages} ethtool networkmanager openssh nmap nss-mdns wireguard-tools"
 
 # audio
 packages="${packages} pipewire lib32-pipewire pipewire-audio pipewire-alsa pipewire-pulse pipewire-jack lib32-pipewire-jack wireplumber"
@@ -107,10 +107,10 @@ packages="${packages} pipewire lib32-pipewire pipewire-audio pipewire-alsa pipew
 packages="${packages} noto-fonts noto-fonts-cjk noto-fonts-emoji"
 
 # other apps
-packages="${packages} firefox vlc qbittorrent cups pinta"
+packages="${packages} firefox mpv qbittorrent"
 
 # printers
-packages="${packages} system-config-printer"
+packages="${packages} cups system-config-printer"
 
 # dev
 packages="${packages} base-devel git cmake"
