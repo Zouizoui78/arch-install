@@ -40,9 +40,9 @@ function loop_until_success
 
 function get_cpu_brand
 {
-    if [ $(lscpu | grep -e "Model name:.*AMD" -eq 0 ) ]; then
+    if [ $(lscpu | grep -e "Model name:.*AMD") -eq 0 ]; then
         echo "amd"
-    elif [ $(lscpu | grep -e "Model name:.*Intel" -eq 0 ) ]; then
+    elif [ $(lscpu | grep -e "Model name:.*Intel") -eq 0 ]; then
         echo "intel"
     fi
 }
