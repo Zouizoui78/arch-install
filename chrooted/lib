@@ -1,0 +1,39 @@
+#!/bin/bash
+
+function numchoice
+{
+    if [ $# -ne 2 ]; then
+        exit 1
+    fi
+    re='^[0-9]+$'
+    if ! [[ $1 =~ $re ]] || ! [[ $2 =~ $re ]] ; then
+        exit 1
+    fi
+    set +u
+    while [ -z $ask ] || ! [[ $ask =~ $re ]] || [ $ask -lt $1 ] || [ $ask -gt $2 ] ; do
+        read ask
+    done
+    echo $ask
+    set -u
+}
+
+function yesno
+{
+    set +u
+    while [ -z $ask ] || ([ $ask != "y" ] && [ $ask != "n" ]); do
+        read ask
+    done
+    echo $ask
+    set -u
+}
+
+function loop_until_success
+{
+    set +e
+    eval $1
+    while [ $? -ne 0 ];
+    do
+        eval $1
+    done
+    set -e
+}

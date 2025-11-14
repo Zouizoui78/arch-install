@@ -1,0 +1,122 @@
+#!/bin/bash
+
+set -exou pipefail
+. ./lib
+
+cp -r etc /
+
+# pacman config
+sed -i "s/#Color/Color/" /etc/pacman.conf
+sed -i "s/#[multilib]\n#Include = \/etc\/pacman.d\/mirrorlist/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /etc/pacman.conf
+
+# Use all available cores for aur packages compilation
+sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'`nproc`'"/' /etc/makepkg.conf
+
+ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
+hwclock --systohc
+
+# Activate en_DK.UTF-8 locale
+# en_DK to have english with normal measurement units and formats for time, date, etc
+echo "en_DK.UTF-8 UTF-8" > /etc/locale.gen
+locale-gen
+
+echo "LANG=en_DK.UTF-8" > /etc/locale.conf
+
+localectl set-x11-keymap fr
+
+echo "Hostname ?"
+read hostname
+echo $hostname > /etc/hostname
+
+echo "Select your CPU brand :
+1- AMD
+2- Intel"
+cpu=$(numchoice 1 2)
+
+echo "Did you install the linux-lts kernel ? y/n"
+lts=$(yesno)
+
+# Install systemd-boot's efi boot manager
+bootctl install
+
+# Copy our systemd boot configuration
+# It should automatically find existing Windows install
+cp -r boot /
+
+# Set ucode branc in boot config
+case $cpu in
+    1) sed -i "s/CPU_BRAND/amd/" /boot/loader/entries/arch.conf;;
+    2) sed -i "s/CPU_BRAND/intel/" /boot/loader/entries/arch.conf;;
+esac
+
+# Set linux image and initramfs name if lts kernel was installed
+if [ $lts = "y" ]; then
+    sed -i "s/-linux/-linux-lts/" /boot/loader/entries/arch.conf
+fi
+
+# Set root UUID in boot config
+root_uuid=$(findmnt --output=UUID --noheadings --target=/)
+sed -i "s/ROOT_UUID/$root_uuid/" /boot/loader/entries/arch.conf
+
+echo "blacklist pcspkr" >> /etc/modprobe.d/blacklist.conf
+case $cpu in
+    1) echo "blacklist sp5100_tco" >> /etc/modprobe.d/blacklist.conf;;
+    2) echo "blacklist iTCO_wdt" >> /etc/modprobe.d/blacklist.conf;;
+esac
+
+echo "kernel.sysrq=1 # Enable REISUB" > /etc/sysctl.d/99-sysctl.conf
+
+cat bash.bashrc >> /etc/bash.bashrc
+
+# base
+packages="arch-install-scripts dkms fuse2 htop libdbusmenu-glib man-db man-pages ncdu ntfs-3g nvtop p7zip pacman-contrib pyenv reflector rsync screen sudo texinfo unrar unzip vim wget zip"
+
+# networking
+packages="${packages} networkmanager openssh nmap nss-mdns wireguard-tools ethtool"
+
+# audio
+packages="${packages} pipewire lib32-pipewire pipewire-audio pipewire-alsa pipewire-pulse pipewire-jack lib32-pipewire-jack wireplumber"
+
+# fonts
+packages="${packages} noto-fonts noto-fonts-cjk noto-fonts-emoji"
+
+# other apps
+packages="${packages} firefox vlc qbittorrent cups pinta"
+
+# printers
+packages="${packages} system-config-printer"
+
+# dev
+packages="${packages} base-devel git cmake"
+
+# KDE apps
+packages="${packages} ark bluedevil breeze breeze-gtk dolphin drkonqi gwenview kcalc kde-gtk-config kdeplasma-addons kfind kinfocenter konsole kpipewire kscreen kscreenlocker kwallet-pam kwalletmanager kwin kwrite plasma-desktop plasma-nm plasma-pa polkit-kde-agent print-manager sddm-kcm spectacle systemsettings xdg-desktop-portal-kde"
+
+if [ $lts = "y" ]; then
+    packages="${packages} linux-lts-headers"
+else
+    packages="${packages} linux-headers"
+fi
+
+case $cpu in
+    1) packages="${packages} amd-ucode";;
+    2) packages="${packages} intel-ucode";;
+esac
+
+pacman -Syu --needed $packages
+
+genfstab -U / > /etc/fstab
+sed -i "s/relatime/noatime/" /etc/fstab
+
+echo "Username ?"
+read username
+useradd -m $username --groups adm,log,rfkill,sys
+echo "$username password ?"
+loop_until_success "passwd $username"
+
+echo "$username ALL=(ALL:ALL) ALL" > /etc/sudoers.d/$username
+
+# Set avahi conf
+sed -i "s/hosts:.*/hosts: mymachines mdns_minimal \[NOTFOUND=return\] resolve \[!UNAVAIL=return\] files myhostname dns/" /etc/nsswitch.conf
+
+systemctl enable avahi-daemon bluetooth cups.socket fstrim.timer NetworkManager reflector.timer sddm systemd-timesyncd
