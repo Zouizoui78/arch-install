@@ -1,8 +1,8 @@
 #!/bin/bash
 
 set -exou pipefail
+cd /arch-install
 . ./lib
-
 cp -r etc /
 
 # pacman config
