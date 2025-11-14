@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eou pipefail
+set -exou pipefail
 cd /arch-install
 . ./lib
 
@@ -33,7 +33,7 @@ PRESETS=('default' 'fallback')
 default_image="/boot/initramfs-linux.img"
 default_uki="/efi/EFI/Linux/arch-linux.efi"
 fallback_image="/boot/initramfs-linux-fallback.img"
-fallback_options="-S autodetect
+fallback_options="-S autodetect"
 EOF
 
 # Set kernel command line
