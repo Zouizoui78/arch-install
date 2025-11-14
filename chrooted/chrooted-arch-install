@@ -25,7 +25,7 @@ echo $hostname > /etc/hostname
 localectl set-x11-keymap fr
 
 # Configure mkinitcpio
-sed -i "s/^HOOK.*$/HOOKS=(systemd autodetect microcode modconf keyboard sd-vconsole block sd-encrypt filesystems fsck)/"
+sed -i "s/^HOOK.*$/HOOKS=(systemd autodetect microcode modconf keyboard sd-vconsole block sd-encrypt filesystems fsck)/" /etc/mkinitcpio.conf
 
 echo 'ALL_kver="/boot/vmlinuz-linux"
 PRESETS=('default' 'fallback')
