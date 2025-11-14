@@ -27,12 +27,14 @@ localectl set-x11-keymap fr
 # Configure mkinitcpio
 sed -i "s/^HOOK.*$/HOOKS=(systemd autodetect microcode modconf keyboard sd-vconsole block sd-encrypt filesystems fsck)/" /etc/mkinitcpio.conf
 
-echo 'ALL_kver="/boot/vmlinuz-linux"
+cat > /etc/mkinitcpio.d/linux.preset <<EOF
+ALL_kver="/boot/vmlinuz-linux"
 PRESETS=('default' 'fallback')
 default_image="/boot/initramfs-linux.img"
 default_uki="/efi/EFI/Linux/arch-linux.efi"
 fallback_image="/boot/initramfs-linux-fallback.img"
-fallback_options="-S autodetect' > /etc/mkinitcpio.d/linux.preset
+fallback_options="-S autodetect
+EOF
 
 # Set kernel command line
 LUKS_PART_PATH=$(cryptsetup status root | grep device | cut -d ":" -f 2 | xargs)
