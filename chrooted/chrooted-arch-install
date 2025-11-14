@@ -35,7 +35,8 @@ fallback_image="/boot/initramfs-linux-fallback.img"
 fallback_options="-S autodetect' > /etc/mkinitcpio.d/linux.preset
 
 # Set kernel command line
-LUKS_PART_UUID=$(blkid -t TYPE=crypto_LUKS -s UUID -o value)
+LUKS_PART_PATH=$(cryptsetup status root | grep device | cut -d ":" -f 2 | xargs)
+LUKS_PART_UUID=$(blkid -s UUID -o value $LUKS_PART_PATH)
 echo "rd.luks.name=$LUKS_PART_UUID=root rootflags=rw,nodev,noatime" > /etc/kernel/cmdline
 
 # Install systemd-boot's efi boot manager
@@ -68,7 +69,6 @@ sbctl sign -s /efi/EFI/systemd/systemd-bootx64.efi
 sbctl sign -s /efi/EFI/Linux/arch-linux.efi
 
 # Enroll TPM
-LUKS_PART_PATH=$(blkid -t TYPE=crypto_LUKS | cut -d ":" -f 1)
 systemd-cryptenroll $LUKS_PART_PATH --recovery-key
 systemd-cryptenroll $LUKS_PART_PATH --wipe-slot=empty --tpm2-device=auto --tpm2-with-pin=yes --tpm2-pcrs=7+15:sha256=0000000000000000000000000000000000000000000000000000000000000000
 
