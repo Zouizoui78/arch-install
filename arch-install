@@ -65,12 +65,6 @@ echo "Hostname ?"
 read hostname
 echo $hostname > /etc/hostname
 
-echo "Username ?"
-read username
-useradd -m $username --groups wheel,adm,ftp,games,http,log,rfkill,sys,audio,scanner,storage,video,input
-echo "$username password ?"
-loop_until_success "passwd $username"
-
 echo "Select your CPU brand :
 1- AMD
 2- Intel"
@@ -151,7 +145,13 @@ pacman -Syu --needed $packages
 genfstab -U / > /etc/fstab
 sed -i "s/relatime/noatime/" /etc/fstab
 
-sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
+echo "Username ?"
+read username
+useradd -m $username --groups adm,log,rfkill,sys
+echo "$username password ?"
+loop_until_success "passwd $username"
+
+echo "$username ALL=(ALL:ALL) ALL" > /etc/sudoers.d/$username
 
 # Set reflector country setting
 sed -i "s/# --country France,Germany/--country France,Germany/" /etc/xdg/reflector/reflector.conf
