@@ -69,7 +69,8 @@ sbctl create-keys
 # If including firmware certificates (-f) fails,
 # try without
 set +e
-ENROLL_RES=$(sbctl enroll-keys -m -f)
+sbctl enroll-keys -m -f
+ENROLL_RES=$?
 set -e
 if [ ENROLL_RES -ne 0 ]; then
     sbctl enroll-keys -m
