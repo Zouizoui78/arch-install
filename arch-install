@@ -41,4 +41,7 @@ pacstrap -K /mnt base linux linux-firmware
 
 cp -r chrooted /mnt/arch-install
 
-arch-chroot /mnt "cd /arch-install && ./chrooted-arch-install"
+arch-chroot /mnt /bin/bash << EOF
+    cd /arch-install
+    ./chrooted-arch-install
+EOF
