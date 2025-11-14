@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -exou pipefail
+set -eou pipefail
 
 echo "Which disk to install on ?"
 read DISK

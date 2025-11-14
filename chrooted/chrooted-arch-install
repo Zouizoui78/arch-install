@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -exou pipefail
+set -eou pipefail
 cd /arch-install
 . ./lib
 cp -r etc /
