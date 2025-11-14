@@ -66,7 +66,14 @@ mkinitcpio -P
 sbctl create-keys
 
 # Enroll secure boot keys
-sbctl enroll-keys -m -f
+# If including firmware certificates (-f) fails,
+# try without
+set +e
+ENROLL_RES=$(sbctl enroll-keys -m -f)
+set -e
+if [ ENROLL_RES -ne 0 ]; then
+    sbctl enroll-keys -m
+fi
 
 # Sign boot files
 sbctl sign -s /efi/EFI/BOOT/BOOTX64.EFI
