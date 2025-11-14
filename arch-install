@@ -9,6 +9,8 @@ read DISK
 # The sed command strips the comment
 # Blank lines use the default option
 # Taken from https://superuser.com/a/984637
+# Here we setup partitions as per
+# https://wiki.archlinux.org/title/Dm-crypt/Encrypting_an_entire_system#LUKS_on_a_partition_with_TPM2_and_Secure_Boot
 sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk "$DISK"
     g # new GPT partition table
     n # new partition
@@ -29,7 +31,7 @@ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk "$DISK"
     q # and we're done
 EOF
 
-cryptsetup luksFormat "$DISK"2
+cryptsetup -y luksFormat "$DISK"2
 cryptsetup open "$DISK"2 root
 mkfs.ext4 /dev/mapper/root
 mount /dev/mapper/root /mnt
@@ -37,7 +39,7 @@ mount /dev/mapper/root /mnt
 mkfs.fat -F 32 "$DISK"1
 mount --mkdir "$DISK"1 /mnt/efi
 
-pacstrap -K /mnt base linux linux-firmware
+pacstrap -K /mnt base linux linux-firmware sudo
 
 cp -r chrooted /mnt/arch-install
 

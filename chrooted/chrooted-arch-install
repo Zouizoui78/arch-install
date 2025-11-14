@@ -3,30 +3,81 @@
 set -eou pipefail
 cd /arch-install
 . ./lib
-cp -r etc /
 
-# pacman config
-sed -i "s/#Color/Color/" /etc/pacman.conf
-sed -i "s/#[multilib]\n#Include = \/etc\/pacman.d\/mirrorlist/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /etc/pacman.conf
-
-# Use all available cores for aur packages compilation
-sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'`nproc`'"/' /etc/makepkg.conf
-
+# Set timezone
 ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
+
+# Set hardware clock to current time
 hwclock --systohc
 
 # Activate en_DK.UTF-8 locale
 # en_DK to have english with normal measurement units and formats for time, date, etc
 echo "en_DK.UTF-8 UTF-8" > /etc/locale.gen
 locale-gen
-
 echo "LANG=en_DK.UTF-8" > /etc/locale.conf
 
-localectl set-x11-keymap fr
-
+# Set hostname
 echo "Hostname ?"
 read hostname
 echo $hostname > /etc/hostname
+
+# Set fr keymap for x11 stuff like sddm
+localectl set-x11-keymap fr
+
+# Configure mkinitcpio
+sed -i "s/^HOOK.*$/HOOKS=(systemd autodetect microcode modconf keyboard sd-vconsole block sd-encrypt filesystems fsck)/"
+
+echo 'ALL_kver="/boot/vmlinuz-linux"
+PRESETS=('default' 'fallback')
+default_image="/boot/initramfs-linux.img"
+default_uki="/efi/EFI/Linux/arch-linux.efi"
+fallback_image="/boot/initramfs-linux-fallback.img"
+fallback_options="-S autodetect' > /etc/mkinitcpio.d/linux.preset
+
+# Set kernel command line
+LUKS_PART_UUID=$(blkid -t TYPE=crypto_LUKS -s UUID -o value)
+echo "rd.luks.name=$LUKS_PART_UUID=root rootflags=rw,nodev,noatime" > /etc/kernel/cmdline
+
+# Install systemd-boot's efi boot manager
+bootctl install
+
+# Generate initramfs
+mkinitcpio -P
+
+# Create user account
+echo "Username ?"
+read username
+# See groups here https://wiki.archlinux.org/title/Users_and_groups#User_groups
+useradd -m $username --groups adm,log,rfkill,sys
+echo "$username password ?"
+loop_until_success "passwd $username"
+
+
+### From this point the computer should boot and be usable
+
+
+# Create secure boot keys
+sbctl create-keys
+
+# Enroll secure boot keys
+sbctl enroll-keys -m -f
+
+# Sign boot files
+sbctl sign -s /efi/EFI/BOOT/BOOTX64.EFI
+sbctl sign -s /efi/EFI/systemd/systemd-bootx64.efi
+sbctl sign -s /efi/EFI/Linux/arch-linux.efi
+
+# Enroll TPM
+LUKS_PART_PATH=$(blkid -t TYPE=crypto_LUKS | cut -d ":" -f 1)
+systemd-cryptenroll $LUKS_PART_PATH --recovery-key
+systemd-cryptenroll $LUKS_PART_PATH --wipe-slot=empty --tpm2-device=auto --tpm2-with-pin=yes --tpm2-pcrs=7+15:sha256=0000000000000000000000000000000000000000000000000000000000000000
+
+# pacman config
+sed -i "s/#Color/Color/" /etc/pacman.conf
+sed -i "s/#[multilib]\n#Include = \/etc\/pacman.d\/mirrorlist/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /etc/pacman.conf
+
+# Use all available cores for aur packages compilation
+sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/" /etc/makepkg.conf
 
 echo "Select your CPU brand :
 1- AMD
@@ -35,24 +86,6 @@ cpu=$(numchoice 1 2)
 
 echo "Did you install the linux-lts kernel ? y/n"
 lts=$(yesno)
-
-# Install systemd-boot's efi boot manager
-bootctl install
-
-# Copy our systemd boot configuration
-# It should automatically find existing Windows install
-cp -r boot /
-
-# Set ucode branc in boot config
-case $cpu in
-    1) sed -i "s/CPU_BRAND/amd/" /boot/loader/entries/arch.conf;;
-    2) sed -i "s/CPU_BRAND/intel/" /boot/loader/entries/arch.conf;;
-esac
-
-# Set linux image and initramfs name if lts kernel was installed
-if [ $lts = "y" ]; then
-    sed -i "s/-linux/-linux-lts/" /boot/loader/entries/arch.conf
-fi
 
 # Set root UUID in boot config
 root_uuid=$(findmnt --output=UUID --noheadings --target=/)
@@ -69,7 +102,7 @@ echo "kernel.sysrq=1 # Enable REISUB" > /etc/sysctl.d/99-sysctl.conf
 cat bash.bashrc >> /etc/bash.bashrc
 
 # base
-packages="arch-install-scripts dkms fuse2 htop libdbusmenu-glib man-db man-pages ncdu ntfs-3g nvtop p7zip pacman-contrib pyenv reflector rsync screen sudo texinfo unrar unzip vim wget zip"
+packages="arch-install-scripts dkms fuse2 htop libdbusmenu-glib man-db man-pages ncdu ntfs-3g nvtop p7zip pacman-contrib pyenv reflector rsync screen texinfo unrar unzip vim wget zip"
 
 # networking
 packages="${packages} networkmanager openssh nmap nss-mdns wireguard-tools ethtool"
@@ -108,15 +141,11 @@ pacman -Syu --needed $packages
 genfstab -U / > /etc/fstab
 sed -i "s/relatime/noatime/" /etc/fstab
 
-echo "Username ?"
-read username
-useradd -m $username --groups adm,log,rfkill,sys
-echo "$username password ?"
-loop_until_success "passwd $username"
-
 echo "$username ALL=(ALL:ALL) ALL" > /etc/sudoers.d/$username
 
 # Set avahi conf
 sed -i "s/hosts:.*/hosts: mymachines mdns_minimal \[NOTFOUND=return\] resolve \[!UNAVAIL=return\] files myhostname dns/" /etc/nsswitch.conf
 
 systemctl enable avahi-daemon bluetooth cups.socket fstrim.timer NetworkManager reflector.timer sddm systemd-timesyncd
+
+cp -r etc /
