@@ -45,7 +45,10 @@ echo "rd.luks.name=$LUKS_PART_UUID=root rootflags=rw,nodev,noatime" > /etc/kerne
 bootctl install
 
 # Generate initramfs
+# Errors are expected here
+set +e
 mkinitcpio -P
+set -e
 
 # Create user account
 echo "Username ?"
