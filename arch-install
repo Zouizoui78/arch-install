@@ -39,7 +39,7 @@ mount /dev/mapper/root /mnt
 mkfs.fat -F 32 "$DISK"1
 mount --mkdir "$DISK"1 /mnt/efi
 
-pacstrap -K /mnt base linux linux-firmware sudo
+pacstrap -K /mnt base linux linux-firmware sbctl sudo
 
 cp -r chrooted /mnt/arch-install
 
