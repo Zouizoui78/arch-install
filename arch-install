@@ -120,8 +120,8 @@ packages="${packages} noto-fonts noto-fonts-cjk noto-fonts-emoji"
 # other apps
 packages="${packages} firefox vlc qbittorrent cups pinta"
 
-# needed for printing to work and for printers management
-packages="${packages} ghostscript system-config-printer"
+# printers
+packages="${packages} system-config-printer"
 
 # dev
 packages="${packages} base-devel git cmake"
