@@ -51,3 +51,8 @@ function get_cpu_brand
         echo "intel"
     fi
 }
+
+function get_disk_partition_path
+{
+    echo $(blkid | grep -e "$1.*$2:" | cut -d ":" -f 1)
+}
