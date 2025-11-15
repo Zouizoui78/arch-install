@@ -16,11 +16,14 @@ echo "en_DK.UTF-8 UTF-8" > /etc/locale.gen
 locale-gen
 echo "LANG=en_DK.UTF-8" > /etc/locale.conf
 
-# Set keymap for console and x11 stuff like sddm
+# Set keymap for console
 cat > /etc/vconsole.conf <<EOF
 KEYMAP=fr
 XKBLAYOUT=fr
 EOF
+
+# Set keymap for x11 stuff like sddm
+localectl set-x11-keymap fr
 
 # Set hostname
 echo "Hostname ?"
