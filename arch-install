@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eou pipefail
+set -exou pipefail
 . chrooted/lib
 
 echo "Which disk to install on ?"
