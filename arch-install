@@ -42,7 +42,7 @@ mount /dev/mapper/root /mnt
 mkfs.fat -F 32 "$EFI_PART_PATH"
 mount --mkdir "$EFI_PART_PATH" /mnt/efi
 
-pacstrap -K /mnt base linux linux-firmware qrencode sbctl sudo
+pacstrap -K /mnt base linux linux-firmware sbctl sudo
 
 cp -r chrooted /mnt/arch-install
 chmod 700 /mnt/arch-install
