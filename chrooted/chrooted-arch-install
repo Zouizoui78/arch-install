@@ -70,7 +70,7 @@ if [ $? -eq 0 ] && [ -e /dev/tpm0 ]; then
 
     # Generate a recovery key (just a long, high-entropy passphrase) and enroll it
     LUKS_RECOVERY_PATH=/arch-install/luks-recovery-key.txt
-    systemd-cryptenroll $LUKS_PART_PATH --recovery-key > "$LUKS_RECOVERY_PATH"
+    systemd-cryptenroll $LUKS_PART_PATH --recovery-key | tee "$LUKS_RECOVERY_PATH"
     echo "Disk encryption recovery key saved to $LUKS_RECOVERY_PATH."
     echo "Make sure to save it later. You can also scan the QR code."
     echo "Press Enter to continue..."
