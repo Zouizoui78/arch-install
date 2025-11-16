@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -exou pipefail
+set -eou pipefail
 cd /arch-install
 . ./lib
 
@@ -108,7 +108,3 @@ pacman -Syu --needed $packages
 sed -i 's/hosts:.*/hosts: mymachines mdns_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/' /etc/nsswitch.conf
 
 systemctl enable avahi-daemon bluetooth cups.socket fstrim.timer NetworkManager reflector.timer sddm systemd-timesyncd
-
-echo "Done !"
-echo "Don't forget to store your disk encryption recovery key somewhere safe."
-echo "You can reboot and use the system now."
