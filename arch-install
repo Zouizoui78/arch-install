@@ -35,12 +35,12 @@ EOF
 EFI_PART_PATH=$(get_disk_partition_path "$DISK" 1)
 LUKS_PART_PATH=$(get_disk_partition_path "$DISK" 2)
 cryptsetup luksFormat "$LUKS_PART_PATH"
-cryptsetup open "$DISK"2 root
+cryptsetup open "$LUKS_PART_PATH" root
 mkfs.ext4 /dev/mapper/root
 mount /dev/mapper/root /mnt
 
-mkfs.fat -F 32 "$DISK"1
-mount --mkdir "$DISK"1 /mnt/efi
+mkfs.fat -F 32 "$EFI_PART_PATH"
+mount --mkdir "$EFI_PART_PATH" /mnt/efi
 
 pacstrap -K /mnt base linux linux-firmware sbctl sudo
 
