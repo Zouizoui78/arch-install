@@ -4,6 +4,8 @@ set -exou pipefail
 cd /arch-install
 . ./lib
 
+cp -r etc /
+
 # Set timezone
 ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
 
@@ -12,15 +14,7 @@ hwclock --systohc
 
 # Activate en_DK.UTF-8 locale
 # en_DK to have english with normal measurement units and formats for time, date, etc
-echo "en_DK.UTF-8 UTF-8" > /etc/locale.gen
 locale-gen
-echo "LANG=en_DK.UTF-8" > /etc/locale.conf
-
-# Set keymap for console
-cat > /etc/vconsole.conf <<EOF
-KEYMAP=fr
-XKBLAYOUT=fr
-EOF
 
 # Set hostname
 echo "Hostname ?"
@@ -34,18 +28,10 @@ read username
 useradd -m $username --groups adm,log,rfkill,sys,wheel
 echo "$username password ?"
 loop_until_success "passwd $username"
+echo "$username ALL=(ALL:ALL) ALL" > /etc/sudoers.d/$username
 
 # Configure mkinitcpio
 sed -i "s/^HOOK.*$/HOOKS=(systemd autodetect microcode modconf keyboard sd-vconsole block sd-encrypt filesystems fsck)/" /etc/mkinitcpio.conf
-
-cat > /etc/mkinitcpio.d/linux.preset <<EOF
-ALL_kver="/boot/vmlinuz-linux"
-PRESETS=('default' 'fallback')
-default_image="/boot/initramfs-linux.img"
-default_uki="/efi/EFI/Linux/arch-linux.efi"
-fallback_image="/boot/initramfs-linux-fallback.img"
-fallback_options="-S autodetect"
-EOF
 
 # Set kernel command line
 LUKS_PART_PATH=$(cryptsetup status root | grep device | cut -d ":" -f 2 | xargs)
@@ -92,8 +78,6 @@ sed -i "s/#\[multilib\]/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /e
 # Use all available cores for aur packages compilation
 sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'$(nproc)'"/' /etc/makepkg.conf
 
-echo "kernel.sysrq=1 # Enable REISUB" > /etc/sysctl.d/99-sysctl.conf
-
 # base
 packages="$(get_cpu_brand)-ucode fuse2 htop libdbusmenu-glib man-db man-pages ncdu nvtop p7zip pacman-contrib pyenv reflector rsync screen texinfo unrar unzip vim wget zip"
 
@@ -120,23 +104,10 @@ packages="${packages} ark bluedevil breeze breeze-gtk dolphin drkonqi gwenview k
 
 pacman -Syu --needed $packages
 
-echo "$username ALL=(ALL:ALL) ALL" > /etc/sudoers.d/$username
-
 # Set avahi conf
 sed -i 's/hosts:.*/hosts: mymachines mdns_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/' /etc/nsswitch.conf
 
 systemctl enable avahi-daemon bluetooth cups.socket fstrim.timer NetworkManager reflector.timer sddm systemd-timesyncd
-
-cp -r etc /
-
-# Set keymap for X11 stuff like SDDM
-cat > /etc/X11/xorg.conf.d/00-keyboard.conf <<EOF
-Section "InputClass"
-        Identifier "system-keyboard"
-        MatchIsKeyboard "on"
-        Option "XkbLayout" "fr"
-EndSection
-EOF
 
 echo "Done !"
 echo "Don't forget to store your disk encryption recovery key somewhere safe."
