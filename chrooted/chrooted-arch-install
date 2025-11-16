@@ -31,7 +31,7 @@ echo $hostname > /etc/hostname
 echo "Username ?"
 read username
 # See groups here https://wiki.archlinux.org/title/Users_and_groups#User_groups
-useradd -m $username --groups adm,log,rfkill,sys
+useradd -m $username --groups adm,log,rfkill,sys,wheel
 echo "$username password ?"
 loop_until_success "passwd $username"
 
