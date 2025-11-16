@@ -47,7 +47,7 @@ pacstrap -K /mnt base linux linux-firmware qrencode sbctl sudo
 cp -r chrooted /mnt/arch-install
 chmod 700 /mnt/arch-install
 
-arch-chroot /mnt bash -c /arch-install/chrooted-arch-install | tee /mnt/arch-install/install.log
+arch-chroot /mnt bash -c /arch-install/chrooted-arch-install
 
 echo "Done !"
 echo "Don't forget to store /arch-install/luks-recovery-key.txt somewhere safe."
