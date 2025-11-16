@@ -48,26 +48,39 @@ mkinitcpio -P
 ### From this point the computer should boot and be usable
 
 
-# Create secure boot keys
-sbctl create-keys
+# Check that secure boot is in setup mode and that a TPM is available
+if [ $(sbctl status | grep "Setup Mode:.*Enabled") -eq 0 ] && [ -e /dev/tpm0 ]; then
+    # Create secure boot keys
+    sbctl create-keys
 
-# Enroll secure boot keys
-# If including firmware certificates (-f) fails,
-# try without
-set +e
-sbctl enroll-keys -m -f
-ENROLL_RES=$?
-set -e
-if [ "$ENROLL_RES" -ne 0 ]; then
-    sbctl enroll-keys -m
+    # Enroll secure boot keys
+    # If including firmware certificates (-f) fails,
+    # try without
+    set +e
+    sbctl enroll-keys -m -f
+    ENROLL_RES=$?
+    set -e
+    if [ "$ENROLL_RES" -ne 0 ]; then
+        sbctl enroll-keys -m
+    fi
+
+    # Sign .efi boot files
+    sbctl sign-all
+
+    # Generate a recovery key (just a long, high-entropy passphrase) and enroll it
+    LUKS_RECOVERY_PATH=/arch-install/luks-recovery-key.txt
+    systemd-cryptenroll $LUKS_PART_PATH --recovery-key > "$LUKS_RECOVERY_PATH"
+    echo "Disk encryption recovery key saved to $LUKS_RECOVERY_PATH."
+    echo "Make sure to save it later. You can also scan the QR code."
+    echo "Press Enter to continue..."
+
+    # Generate another key and store it in TPM
+    systemd-cryptenroll $LUKS_PART_PATH --wipe-slot=empty --tpm2-device=auto --tpm2-pcrs=7+15:sha256=0000000000000000000000000000000000000000000000000000000000000000 # --tpm2-with-pin=yes
+else
+    echo "Secure boot is not is setup mode, or there is no TPM in the system."
+    echo "Skipping secure boot and TPM setup."
+    echo "Press Enter to continue..."
 fi
-
-# Sign .efi boot files
-sbctl sign-all
-
-# Enroll TPM
-systemd-cryptenroll $LUKS_PART_PATH --recovery-key > /arch-install/luks-recovery-key.txt
-systemd-cryptenroll $LUKS_PART_PATH --wipe-slot=empty --tpm2-device=auto --tpm2-pcrs=7+15:sha256=0000000000000000000000000000000000000000000000000000000000000000 # --tpm2-with-pin=yes
 
 # pacman config
 sed -i "s/#Color/Color/" /etc/pacman.conf
