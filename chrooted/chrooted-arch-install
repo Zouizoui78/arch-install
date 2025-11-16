@@ -129,8 +129,14 @@ systemctl enable avahi-daemon bluetooth cups.socket fstrim.timer NetworkManager 
 
 cp -r etc /
 
-# Set keymap for x11 stuff like sddm
-localectl set-x11-keymap fr
+# Set keymap for X11 stuff like SDDM
+cat > /etc/X11/xorg.conf.d/00-keyboard.conf <<EOF
+Section "InputClass"
+        Identifier "system-keyboard"
+        MatchIsKeyboard "on"
+        Option "XkbLayout" "fr"
+EndSection
+EOF
 
 echo "Done !"
 echo "Don't forget to store your disk encryption recovery key somewhere safe."
