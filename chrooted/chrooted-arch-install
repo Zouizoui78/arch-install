@@ -79,7 +79,7 @@ sbctl sign -s /efi/EFI/Linux/arch-linux.efi
 
 # Enroll TPM
 systemd-cryptenroll $LUKS_PART_PATH --recovery-key > /arch-install/luks-recovery-key.txt
-systemd-cryptenroll $LUKS_PART_PATH --wipe-slot=empty --tpm2-device=auto --tpm2-with-pin=yes --tpm2-pcrs=7+15:sha256=0000000000000000000000000000000000000000000000000000000000000000
+systemd-cryptenroll $LUKS_PART_PATH --wipe-slot=empty --tpm2-device=auto --tpm2-pcrs=7+15:sha256=0000000000000000000000000000000000000000000000000000000000000000 # --tpm2-with-pin=yes
 
 # Generate initramfs
 mkinitcpio -P
