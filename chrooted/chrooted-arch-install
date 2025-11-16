@@ -62,10 +62,8 @@ if [ "$ENROLL_RES" -ne 0 ]; then
     sbctl enroll-keys -m
 fi
 
-# Sign boot files
-sbctl sign -s /efi/EFI/BOOT/BOOTX64.EFI
-sbctl sign -s /efi/EFI/systemd/systemd-bootx64.efi
-sbctl sign -s /efi/EFI/Linux/arch-linux.efi
+# Sign .efi boot files
+sbctl sign-all
 
 # Enroll TPM
 systemd-cryptenroll $LUKS_PART_PATH --recovery-key > /arch-install/luks-recovery-key.txt
