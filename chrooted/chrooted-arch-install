@@ -4,27 +4,6 @@ set -exou pipefail
 cd /arch-install
 . ./lib
 
-# Set timezone
-ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
-
-# Set hardware clock to current time
-hwclock --systohc
-
-# Activate en_DK.UTF-8 locale
-# en_DK to have english with normal measurement units and formats for time, date, etc
-echo "en_DK.UTF-8 UTF-8" > /etc/locale.gen
-locale-gen
-echo "LANG=en_DK.UTF-8" > /etc/locale.conf
-
-# Set keymap for console
-cat > /etc/vconsole.conf <<EOF
-KEYMAP=fr
-XKBLAYOUT=fr
-EOF
-
-# Set keymap for x11 stuff like sddm
-localectl set-x11-keymap fr
-
 # Set hostname
 echo "Hostname ?"
 read hostname
@@ -131,6 +110,27 @@ sed -i 's/hosts:.*/hosts: mymachines mdns_minimal [NOTFOUND=return] resolve [!UN
 systemctl enable avahi-daemon bluetooth cups.socket fstrim.timer NetworkManager reflector.timer sddm systemd-timesyncd
 
 cp -r etc /
+
+# Set timezone
+ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
+
+# Set hardware clock to current time
+hwclock --systohc
+
+# Activate en_DK.UTF-8 locale
+# en_DK to have english with normal measurement units and formats for time, date, etc
+echo "en_DK.UTF-8 UTF-8" > /etc/locale.gen
+locale-gen
+echo "LANG=en_DK.UTF-8" > /etc/locale.conf
+
+# Set keymap for console
+cat > /etc/vconsole.conf <<EOF
+KEYMAP=fr
+XKBLAYOUT=fr
+EOF
+
+# Set keymap for x11 stuff like sddm
+localectl set-x11-keymap fr
 
 echo "Done !"
 echo "Don't forget to store your disk encryption recovery key somewhere safe."
