@@ -73,6 +73,7 @@ if [ $(sbctl status | grep "Setup Mode:.*Enabled") -eq 0 ] && [ -e /dev/tpm0 ]; 
     echo "Disk encryption recovery key saved to $LUKS_RECOVERY_PATH."
     echo "Make sure to save it later. You can also scan the QR code."
     echo "Press Enter to continue..."
+    read
 
     # Generate another key and store it in TPM
     systemd-cryptenroll $LUKS_PART_PATH --wipe-slot=empty --tpm2-device=auto --tpm2-pcrs=7+15:sha256=0000000000000000000000000000000000000000000000000000000000000000 # --tpm2-with-pin=yes
@@ -80,6 +81,7 @@ else
     echo "Secure boot is not is setup mode, or there is no TPM in the system."
     echo "Skipping secure boot and TPM setup."
     echo "Press Enter to continue..."
+    read
 fi
 
 # pacman config
