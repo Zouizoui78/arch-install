@@ -3,7 +3,10 @@
 set -eou pipefail
 . chrooted/lib
 
-echo "Which disk to install on ?"
+echo "WARNING : This script does not care about your data.
+New partitions will be created and the existing data will be permanently lost.
+Press ctrl+c right now if this is not ok.
+Which disk to install on ?"
 read DISK
 
 # Simulates manual inputs to fdisk
@@ -34,8 +37,8 @@ EOF
 
 EFI_PART_PATH=$(get_disk_partition_path "$DISK" 1)
 LUKS_PART_PATH=$(get_disk_partition_path "$DISK" 2)
-cryptsetup luksFormat "$LUKS_PART_PATH"
-cryptsetup open "$LUKS_PART_PATH" root
+loop_until_success "cryptsetup luksFormat $LUKS_PART_PATH"
+loop_until_success "cryptsetup open $LUKS_PART_PATH" root
 mkfs.ext4 /dev/mapper/root
 mount /dev/mapper/root /mnt
 
@@ -49,6 +52,6 @@ chmod 700 /mnt/arch-install
 
 arch-chroot /mnt bash -c /arch-install/chrooted-arch-install
 
-echo "Done !"
-echo "Don't forget to store /arch-install/luks-recovery-key.txt somewhere safe."
-echo "You can reboot and use the system now."
+echo "Done !
+Don't forget to store /arch-install/luks-recovery-key.txt somewhere safe.
+You can reboot and use the system now."

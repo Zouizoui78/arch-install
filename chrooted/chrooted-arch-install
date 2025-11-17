@@ -41,7 +41,7 @@ echo "rd.luks.name=$LUKS_PART_UUID=root rootflags=rw,nodev,noatime" > /etc/kerne
 # Install systemd-boot's efi boot manager
 bootctl install
 
-# Generate initramfs
+# Generate initramfs now because we need the efi files to sign them later with sbctl
 mkinitcpio -P
 
 
@@ -123,4 +123,4 @@ pacman -Syu --needed $packages
 # Set avahi conf
 sed -i 's/hosts:.*/hosts: mymachines mdns_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/' /etc/nsswitch.conf
 
-systemctl enable avahi-daemon bluetooth cups.socket fstrim.timer NetworkManager reflector.timer sddm systemd-timesyncd
+systemctl enable avahi-daemon.service bluetooth.service cups.socket fstrim.timer NetworkManager.service reflector.timer sddm.service systemd-timesyncd.service
