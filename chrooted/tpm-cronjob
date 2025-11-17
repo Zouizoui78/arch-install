@@ -1,5 +1,0 @@
-#!/bin/bash
-
-systemd-cryptenroll $1 --unlock-key-file=/arch-install/luks-passphrase.txt --recovery-key
-systemd-cryptenroll $1 --unlock-key-file=/arch-install/luks-passphrase.txt --wipe-slot=empty --tpm2-device=auto --tpm2-pcrs=7+15:sha256=0000000000000000000000000000000000000000000000000000000000000000 > /arch-install/luks-recovery-key.txt
-crontab -r
