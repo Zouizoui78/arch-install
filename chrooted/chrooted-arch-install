@@ -78,7 +78,9 @@ if [ $? -eq 0 ] && [ -e /dev/tpm0 ]; then
     A recovery key will also be generated and saved to 
     Disk encryption recovery key saved to /arch-install/luks-recovery-key.txt.
     Make sure to save it later.
+    The passphrase that must be entered on first boot is an empty string (just press Enter).
     Press Enter to continue..."
+    read
 else
     echo "Secure boot is not is setup mode, or there is no TPM in the system.
     Skipping secure boot and TPM setup.
