@@ -70,20 +70,19 @@ if [ $? -eq 0 ] && [ -e /dev/tpm0 ]; then
     sbctl sign -s /efi/EFI/systemd/systemd-bootx64.efi
     sbctl sign -s /efi/EFI/Linux/arch-linux.efi
 
-    # Generate a recovery key (just a long, high-entropy passphrase) and enroll it
-    LUKS_RECOVERY_PATH=/arch-install/luks-recovery-key.txt
-    systemd-cryptenroll $LUKS_PART_PATH --recovery-key | tee "$LUKS_RECOVERY_PATH"
-    echo "Disk encryption recovery key saved to $LUKS_RECOVERY_PATH."
-    echo "Make sure to save it later."
-    echo "Press Enter to continue..."
-    read
+    # Secure boot has to be enabled for TPM enrollement to work
+    # So we tell cronie to run the TPM enrollement script on first boot
+    echo "@reboot /arch-install/tpm-cronjob $LUKS_PART_PATH"
 
-    # Generate another key and store it in TPM
-    systemd-cryptenroll $LUKS_PART_PATH --wipe-slot=empty --tpm2-device=auto --tpm2-pcrs=7+15:sha256=0000000000000000000000000000000000000000000000000000000000000000 # --tpm2-with-pin=yes
+    echo "On first OS boot, an encryption key will be generated and stored in the TPM.
+    A recovery key will also be generated and saved to 
+    Disk encryption recovery key saved to /arch-install/luks-recovery-key.txt.
+    Make sure to save it later.
+    Press Enter to continue..."
 else
-    echo "Secure boot is not is setup mode, or there is no TPM in the system."
-    echo "Skipping secure boot and TPM setup."
-    echo "Press Enter to continue..."
+    echo "Secure boot is not is setup mode, or there is no TPM in the system.
+    Skipping secure boot and TPM setup.
+    Press Enter to continue..."
     read
 fi
 
@@ -123,4 +122,4 @@ pacman -Syu --needed $packages
 # Set avahi conf
 sed -i 's/hosts:.*/hosts: mymachines mdns_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/' /etc/nsswitch.conf
 
-systemctl enable avahi-daemon.service bluetooth.service cups.socket fstrim.timer NetworkManager.service reflector.timer sddm.service systemd-timesyncd.service
+systemctl enable avahi-daemon.service bluetooth.service cronie.service cups.socket fstrim.timer NetworkManager.service reflector.timer sddm.service systemd-timesyncd.service

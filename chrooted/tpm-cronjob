@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "" | systemd-cryptenroll $1 --recovery-key
+echo "" | systemd-cryptenroll $1 --wipe-slot=empty --tpm2-device=auto --tpm2-pcrs=7+15:sha256=0000000000000000000000000000000000000000000000000000000000000000 > /arch-install/luks-recovery-key.txt
+crontab -r
