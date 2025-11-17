@@ -1,5 +1,4 @@
 #!/bin/bash
 
-echo -n "passphrase" | systemd-cryptenroll $1 --recovery-key --wipe-slot=all
-echo -n "passphrase" | systemd-cryptenroll $1 --tpm2-device=auto --tpm2-pcrs=7+15:sha256=0000000000000000000000000000000000000000000000000000000000000000 > /arch-install/luks-recovery-key.txt
-crontab -r
+systemd-cryptenroll %LUKS_PARTITION_PATH% --recovery-key > /arch-install/luks-recovery-key.txt
+systemd-cryptenroll %LUKS_PARTITION_PATH% --wipe-slot=all --tpm2-device=auto --tpm2-pcrs=7+15:sha256=0000000000000000000000000000000000000000000000000000000000000000
