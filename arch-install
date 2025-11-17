@@ -38,6 +38,8 @@ EOF
 EFI_PART_PATH=$(get_disk_partition_path "$DISK" 1)
 LUKS_PART_PATH=$(get_disk_partition_path "$DISK" 2)
 
+echo "Wait will encryption is enabled..."
+
 # This passphrase will be removed after first boot when enrolling TPM
 echo -n "passphrase" | cryptsetup luksFormat $LUKS_PART_PATH -
 echo -n "passphrase" | cryptsetup open $LUKS_PART_PATH root -d -

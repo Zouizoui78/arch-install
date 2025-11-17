@@ -77,7 +77,7 @@ if [ $? -eq 0 ] && [ -e /dev/tpm0 ]; then
     echo "On first OS boot, an encryption key will be generated and stored in the TPM.
 A recovery key will also be generated and saved to /arch-install/luks-recovery-key.txt.
 Make sure to save it later.
-The passphrase that must be entered on first boot is "passphrase".
+The passphrase that must be entered on first boot is \"passphrase\".
 This dummy passphrase will be wiped after first boot.
 Press Enter to continue..."
     read
