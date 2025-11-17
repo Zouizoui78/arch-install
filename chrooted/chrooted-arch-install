@@ -31,7 +31,7 @@ loop_until_success "passwd $username"
 echo "$username ALL=(ALL:ALL) ALL" > /etc/sudoers.d/$username
 
 # Configure mkinitcpio
-sed -i "s/^HOOK.*$/HOOKS=(systemd autodetect microcode modconf keyboard sd-vconsole block sd-encrypt filesystems fsck)/" /etc/mkinitcpio.conf
+sed -i "s/^HOOK.*$/HOOKS=(base systemd autodetect microcode modconf kms keyboard keymap sd-vconsole block sd-encrypt filesystems fsck)/" /etc/mkinitcpio.conf
 
 # Set kernel command line
 LUKS_PART_PATH=$(cryptsetup status root | grep device | cut -d ":" -f 2 | xargs)
