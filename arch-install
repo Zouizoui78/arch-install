@@ -39,8 +39,8 @@ EFI_PART_PATH=$(get_disk_partition_path "$DISK" 1)
 LUKS_PART_PATH=$(get_disk_partition_path "$DISK" 2)
 
 # We enter an empty passphrase here, which will be removed after first boot when enrolling TPM.
-echo "" | cryptsetup luksFormat $LUKS_PART_PATH -
-echo "" | cryptsetup open $LUKS_PART_PATH root -d -
+cryptsetup luksFormat $LUKS_PART_PATH chrooted/luks-passphrase.txt
+cryptsetup open $LUKS_PART_PATH root -d chrooted/luks-passphrase.txt
 
 mkfs.ext4 /dev/mapper/root
 mount /dev/mapper/root /mnt
