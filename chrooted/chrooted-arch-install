@@ -66,7 +66,9 @@ if [ $? -eq 0 ] && [ -e /dev/tpm0 ]; then
     fi
 
     # Sign .efi boot files
-    sbctl sign-all
+    sbctl sign -s /efi/EFI/BOOT/BOOTX64.EFI
+    sbctl sign -s /efi/EFI/systemd/systemd-bootx64.efi
+    sbctl sign -s /efi/EFI/Linux/arch-linux.efi
 
     # Generate a recovery key (just a long, high-entropy passphrase) and enroll it
     LUKS_RECOVERY_PATH=/arch-install/luks-recovery-key.txt
