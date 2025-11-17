@@ -72,7 +72,7 @@ if [ $? -eq 0 ] && [ -e /dev/tpm0 ]; then
 
     # Secure boot has to be enabled for TPM enrollement to work
     # So we tell cronie to run the TPM enrollement script on first boot
-    echo "@reboot /arch-install/tpm-cronjob $LUKS_PART_PATH"
+    echo "@reboot /arch-install/tpm-cronjob $LUKS_PART_PATH" | crontab -
 
     echo "On first OS boot, an encryption key will be generated and stored in the TPM.
     A recovery key will also be generated and saved to 
