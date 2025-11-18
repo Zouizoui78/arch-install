@@ -29,3 +29,19 @@ function get_disk_partition_path
 {
     echo $(blkid | grep -e "$1.*$2:" | cut -d ":" -f 1)
 }
+
+function get_password
+{
+    read -p "Password ? " -s password
+    echo ""
+    read -p "Password again ? " -s passwordagain
+    while [ "$password" != "$passwordagain" ]; do
+        echo ""
+        echo "Passwords do not match"
+        read -p "Password ? " -s password
+        echo ""
+        read -p "Password again ? " -s passwordagain
+    done
+    echo "$password"
+    return 0
+}
