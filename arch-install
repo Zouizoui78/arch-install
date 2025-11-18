@@ -8,12 +8,24 @@ New partitions will be created and the existing data will be permanently lost.
 Press ctrl+c right now if this is not ok.
 Which disk to install on ?"
 read DISK
+while ! [ -e "$DISK" ]; do
+    echo "$DISK does not exist"
+    read DISK
+done
 
 echo "Hostname ?"
 read hostname
+while ! [[ "$hostname" =~ ^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$ ]]; do
+    echo "Invalid hostname, must be valid as per RFC 1123"
+    read hostname
+done
 
 echo "Username ?"
 read username
+while ! [[ "$username" =~ ^([A-Za-z][A-Za-z0-9._-]*)$ ]]; do
+    echo "Invalid username, must start with a letter and contain only letters, digits, dots, dashes and underscores"
+    read username
+done
 
 read -p $'Password ?\n' -s password
 read -p $'Verify password\n' -s password_verify
