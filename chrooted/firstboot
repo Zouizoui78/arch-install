@@ -1,5 +1,14 @@
 #!/bin/bash
 
+set -eou pipefail
+
+set +e
+sbctl status | grep -q "Secure Boot:.*Enabled"
+if [ $? -ne 0 ] || [ -e /dev/tpm0 ]; then
+    exit 1
+fi
+set -e
+
 DEVICE=$1
 RECOVERY_KEY_PATH=/home/$2/luks-recovery-key.txt
 

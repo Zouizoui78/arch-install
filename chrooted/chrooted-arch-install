@@ -48,6 +48,7 @@ mkinitcpio -P
 
 
 # Check that secure boot is in setup mode and that a TPM is available
+set +e
 sbctl status | grep -q "Setup Mode:.*Enabled"
 if [ $? -eq 0 ] && [ -e /dev/tpm0 ]; then
     # Create secure boot keys
@@ -78,6 +79,7 @@ Skipping secure boot and TPM setup.
 Press Enter to continue..."
     read
 fi
+set -e
 
 # pacman config
 sed -i "s/#Color/Color/" /etc/pacman.conf
