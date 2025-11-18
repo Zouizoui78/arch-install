@@ -15,7 +15,8 @@ read hostname
 echo "Username ?"
 read username
 
-password=$(get_password)
+echo "Password ?"
+read password
 
 # Simulates manual inputs to fdisk
 # The sed command strips the comment
