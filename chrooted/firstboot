@@ -12,4 +12,4 @@ chmod 600 $RECOVERY_KEY_PATH
 rm -r /arch-install
 crontab -r
 systemctl disable --now cronie.service
-pacman -Rs cronie
+pacman -Rs --noconfirm cronie
