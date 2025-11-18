@@ -65,6 +65,6 @@ pacstrap -K /mnt base linux linux-firmware cronie sbctl sudo
 cp -r chrooted /mnt/arch-install
 chmod 700 /mnt/arch-install
 
-arch-chroot /mnt bash -c /arch-install/chrooted-arch-install $hostname $username $password
+arch-chroot /mnt bash -c "/arch-install/chrooted-arch-install $hostname $username $password"
 
 echo "Done ! You can reboot and use the system now."
