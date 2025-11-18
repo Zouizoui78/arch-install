@@ -58,6 +58,4 @@ chmod 700 /mnt/arch-install
 
 arch-chroot /mnt bash -c /arch-install/chrooted-arch-install
 
-echo "Done !
-Don't forget to store /arch-install/luks-recovery-key.txt somewhere safe.
-You can reboot and use the system now."
+echo "Done ! You can reboot and use the system now."
