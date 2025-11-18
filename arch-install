@@ -15,8 +15,13 @@ read hostname
 echo "Username ?"
 read username
 
-echo "Password ?"
-read password
+read -p $'Password ?\n' -s password
+read -p $'Verify password\n' -s password_verify
+while [ "$password" != "$password_verify" ]; do
+    echo "Passwords do not match"
+    read -p $'Password ?\n' -s password
+    read -p $'Password again ?\n' -s password_verify
+done
 
 # Simulates manual inputs to fdisk
 # The sed command strips the comment

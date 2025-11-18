@@ -1,16 +1,5 @@
 #!/bin/bash
 
-function loop_until_success
-{
-    set +e
-    eval $1
-    while [ $? -ne 0 ];
-    do
-        eval $1
-    done
-    set -e
-}
-
 function get_cpu_brand
 {
     lscpu | grep -qe "Model name:.*AMD"
