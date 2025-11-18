@@ -15,6 +15,7 @@ done
 
 echo "Hostname ?"
 read hostname
+# Regex from https://stackoverflow.com/a/106223
 while ! [[ "$hostname" =~ ^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$ ]]; do
     echo "Invalid hostname, must be valid as per RFC 1123"
     read hostname
@@ -22,6 +23,7 @@ done
 
 echo "Username ?"
 read username
+# Regex from https://unix.stackexchange.com/a/507591
 while ! [[ "$username" =~ ^([A-Za-z][A-Za-z0-9._-]*)$ ]]; do
     echo "Invalid username, must start with a letter and contain only letters, digits, dots, dashes and underscores"
     read username
