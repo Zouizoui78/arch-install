@@ -72,7 +72,6 @@ if [ $? -eq 0 ] && [ -e /dev/tpm0 ]; then
 
     # Secure boot has to be enabled for TPM enrollement to work
     # So we tell cron to run a script doing that on first boot
-    sed -i "s/%LUKS_PARTITION_PATH%/$LUKS_PART_PATH/g" /arch-install/firstboot
     echo "@reboot /arch-install/firstboot $LUKS_PART_PATH" | crontab -
 
     echo "On first OS boot, an encryption key will be generated and stored in the TPM.
