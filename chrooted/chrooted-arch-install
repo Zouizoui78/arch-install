@@ -69,6 +69,7 @@ if [ $? -eq 0 ] && [ -e /dev/tpm0 ]; then
     sbctl sign -s /efi/EFI/BOOT/BOOTX64.EFI
     sbctl sign -s /efi/EFI/systemd/systemd-bootx64.efi
     sbctl sign -s /efi/EFI/Linux/arch-linux.efi
+    sbctl sign -s /efi/EFI/Linux/arch-linux-fallback.efi
 
     # Secure boot has to be enabled for TPM enrollement to work
     # So we tell cron to run a script doing that on first boot
