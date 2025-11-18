@@ -110,7 +110,7 @@ packages="${packages} base-devel git cmake"
 # KDE apps
 packages="${packages} ark bluedevil breeze breeze-gtk dolphin drkonqi gwenview kcalc kde-gtk-config kdeplasma-addons kfind kinfocenter konsole kpipewire kscreen kscreenlocker kwallet-pam kwalletmanager kwin kwrite plasma-desktop plasma-nm plasma-pa polkit-kde-agent print-manager sddm-kcm spectacle systemsettings xdg-desktop-portal-kde"
 
-pacman -Syu --needed $packages
+pacman -Syu --needed --noconfirm $packages
 
 # Set avahi conf
 sed -i 's/hosts:.*/hosts: mymachines mdns_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/' /etc/nsswitch.conf
