@@ -9,6 +9,15 @@ Press ctrl+c right now if this is not ok.
 Which disk to install on ?"
 read DISK
 
+echo "Hostname ?"
+read hostname
+
+echo "Username ?"
+read username
+
+echo "Password ?"
+read password
+
 # Simulates manual inputs to fdisk
 # The sed command strips the comment
 # Blank lines use the default option
@@ -56,6 +65,6 @@ pacstrap -K /mnt base linux linux-firmware cronie sbctl sudo
 cp -r chrooted /mnt/arch-install
 chmod 700 /mnt/arch-install
 
-arch-chroot /mnt bash -c /arch-install/chrooted-arch-install
+arch-chroot /mnt bash -c /arch-install/chrooted-arch-install $hostname $username $password
 
 echo "Done ! You can reboot and use the system now."
