@@ -7,6 +7,9 @@ cd /arch-install
 HOSTNAME=$1
 USERNAME=$2
 PASSWORD=$3
+LUKS_PART_PATH=$4
+LUKS_DEVICE_NAME=$4
+ROOT_PATH=$5
 
 cp -r etc /
 
@@ -33,9 +36,8 @@ echo "$USERNAME ALL=(ALL:ALL) ALL" > /etc/sudoers.d/$USERNAME
 sed -i "s/^HOOK.*$/HOOKS=(base systemd autodetect microcode modconf kms keyboard keymap sd-vconsole block sd-encrypt lvm2 filesystems fsck)/" /etc/mkinitcpio.conf
 
 # Set kernel command line
-LUKS_PART_PATH=$(cryptsetup status cryptlvm | grep device | cut -d ":" -f 2 | xargs)
 LUKS_PART_UUID=$(blkid -s UUID -o value $LUKS_PART_PATH)
-echo "rd.luks.name=$LUKS_PART_UUID=cryptlvm root=/dev/rootgroup/root rootflags=rw,nodev,noatime" > /etc/kernel/cmdline
+echo "rd.luks.name=$LUKS_PART_UUID=$LUKS_DEVICE_NAME root=$ROOT_PATH rootflags=rw,nodev,noatime" > /etc/kernel/cmdline
 
 # Install systemd-boot's efi boot manager
 bootctl install

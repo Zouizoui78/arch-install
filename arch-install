@@ -14,27 +14,27 @@ while ! [ -e "$DISK" ]; do
 done
 
 echo "Hostname ?"
-read hostname
+read HOSTNAME
 # Regex from https://stackoverflow.com/a/106223
-while ! [[ "$hostname" =~ ^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$ ]]; do
+while ! [[ "$HOSTNAME" =~ ^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$ ]]; do
     echo "Invalid hostname, must be valid as per RFC 1123"
-    read hostname
+    read HOSTNAME
 done
 
 echo "Username ?"
-read username
+read USERNAME
 # Regex from https://unix.stackexchange.com/a/507591
-while ! [[ "$username" =~ ^([A-Za-z][A-Za-z0-9._-]*)$ ]]; do
+while ! [[ "$USERNAME" =~ ^([A-Za-z][A-Za-z0-9._-]*)$ ]]; do
     echo "Invalid username, must start with a letter and contain only letters, digits, dots, dashes and underscores"
-    read username
+    read USERNAME
 done
 
-read -p $'Password ?\n' -s password
-read -p $'Verify password\n' -s password_verify
-while [ "$password" != "$password_verify" ]; do
+read -p $'Password ?\n' -s PASSWORD
+read -p $'Verify PASSWORD\n' -s PASSWORD_VERIFY
+while [ "$PASSWORD" != "$PASSWORD_VERIFY" ]; do
     echo "Passwords do not match"
-    read -p $'Password ?\n' -s password
-    read -p $'Password again ?\n' -s password_verify
+    read -p $'Password ?\n' -s PASSWORD
+    read -p $'Password again ?\n' -s PASSWORD_VERIFY
 done
 
 # Simulates manual inputs to fdisk
@@ -65,22 +65,25 @@ EOF
 
 EFI_PART_PATH=$(get_disk_partition_path "$DISK" 1)
 LUKS_PART_PATH=$(get_disk_partition_path "$DISK" 2)
+LUKS_DEVICE_NAME=cryptlvm
+LVM_GROUP_NAME=volume-group
+ROOT_PATH=/dev/$LVM_GROUP_NAME/root
 
 echo "Wait while encryption is enabled..."
 
 # This passphrase will be removed after first boot when enrolling TPM
 echo -n "passphrase" | cryptsetup luksFormat $LUKS_PART_PATH -
 echo -n "passphrase" | cryptsetup luksAddKey $LUKS_PART_PATH chrooted/luks-key.txt -d -
-cryptsetup open $LUKS_PART_PATH cryptlvm -d chrooted/luks-key.txt
+cryptsetup open $LUKS_PART_PATH $LUKS_DEVICE_NAME -d chrooted/luks-key.txt
 
 # Setup LVM layer
-pvcreate /dev/mapper/cryptlvm
-vgcreate rootgroup /dev/mapper/cryptlvm
-lvcreate -l 100%FREE -n root rootgroup
-lvreduce -L -256M rootgroup/root
+pvcreate /dev/mapper/$LUKS_DEVICE_NAME
+vgcreate $LVM_GROUP_NAME /dev/mapper/$LUKS_DEVICE_NAME
+lvcreate -l 100%FREE -n root $LVM_GROUP_NAME
+lvreduce -L -256M $LVM_GROUP_NAME/root
 
-mkfs.ext4 /dev/rootgroup/root
-mount /dev/rootgroup/root /mnt
+mkfs.ext4 "$ROOT_PATH"
+mount "$ROOT_PATH"
 
 mkfs.fat -F 32 "$EFI_PART_PATH"
 mount --mkdir "$EFI_PART_PATH" /mnt/efi
@@ -90,6 +93,12 @@ pacstrap -K /mnt base linux linux-firmware lvm2 cronie sbctl sudo
 cp -r chrooted /mnt/arch-install
 chmod 700 /mnt/arch-install
 
-arch-chroot /mnt bash -c "/arch-install/chrooted-arch-install $hostname $username $password"
+arch-chroot /mnt bash -c "/arch-install/chrooted-arch-install \
+    $HOSTNAME \
+    $USERNAME \
+    $PASSWORD \
+    $LUKS_PART_PATH \
+    $LUKS_DEVICE_NAME \
+    $ROOT_PATH"
 
 echo "Done ! You can reboot and use the system now."
