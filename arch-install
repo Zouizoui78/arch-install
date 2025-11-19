@@ -71,15 +71,21 @@ echo "Wait while encryption is enabled..."
 # This passphrase will be removed after first boot when enrolling TPM
 echo -n "passphrase" | cryptsetup luksFormat $LUKS_PART_PATH -
 echo -n "passphrase" | cryptsetup luksAddKey $LUKS_PART_PATH chrooted/luks-key.txt -d -
-cryptsetup open $LUKS_PART_PATH root -d chrooted/luks-key.txt
+cryptsetup open $LUKS_PART_PATH cryptlvm -d chrooted/luks-key.txt
 
-mkfs.ext4 /dev/mapper/root
-mount /dev/mapper/root /mnt
+# Setup LVM layer
+pvcreate /dev/mapper/cryptlvm
+vgcreate rootgroup /dev/mapper/cryptlvm
+lvcreate -l 100%FREE -n root rootgroup
+lvreduce -L -256M rootgroup/root
+
+mkfs.ext4 /dev/rootgroup/root
+mount /dev/rootgroup/root /mnt
 
 mkfs.fat -F 32 "$EFI_PART_PATH"
 mount --mkdir "$EFI_PART_PATH" /mnt/efi
 
-pacstrap -K /mnt base linux linux-firmware cronie sbctl sudo
+pacstrap -K /mnt base linux linux-firmware lvm2 cronie sbctl sudo
 
 cp -r chrooted /mnt/arch-install
 chmod 700 /mnt/arch-install
