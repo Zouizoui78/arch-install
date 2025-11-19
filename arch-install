@@ -66,7 +66,7 @@ EOF
 EFI_PART_PATH=$(get_disk_partition_path "$DISK" 1)
 LUKS_PART_PATH=$(get_disk_partition_path "$DISK" 2)
 LUKS_DEVICE_NAME=cryptlvm
-LVM_GROUP_NAME=volume-group
+LVM_GROUP_NAME=volumegroup
 ROOT_PATH=/dev/$LVM_GROUP_NAME/root
 
 echo "Wait while encryption is enabled..."
