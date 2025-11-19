@@ -30,7 +30,7 @@ while ! [[ "$USERNAME" =~ ^([A-Za-z][A-Za-z0-9._-]*)$ ]]; do
 done
 
 read -p $'Password ?\n' -s PASSWORD
-read -p $'Verify PASSWORD\n' -s PASSWORD_VERIFY
+read -p $'Verify password\n' -s PASSWORD_VERIFY
 while [ "$PASSWORD" != "$PASSWORD_VERIFY" ]; do
     echo "Passwords do not match"
     read -p $'Password ?\n' -s PASSWORD
@@ -83,7 +83,7 @@ lvcreate -l 100%FREE -n root $LVM_GROUP_NAME
 lvreduce -L -256M $LVM_GROUP_NAME/root
 
 mkfs.ext4 "$ROOT_PATH"
-mount "$ROOT_PATH"
+mount "$ROOT_PATH" /mnt
 
 mkfs.fat -F 32 "$EFI_PART_PATH"
 mount --mkdir "$EFI_PART_PATH" /mnt/efi
