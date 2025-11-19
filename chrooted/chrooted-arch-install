@@ -10,6 +10,7 @@ PASSWORD=$3
 LUKS_PART_PATH=$4
 LUKS_DEVICE_NAME=$5
 ROOT_PATH=$6
+ESP=$7
 
 cp -r etc /
 
@@ -68,10 +69,10 @@ if [ $? -eq 0 ] && [ -e /dev/tpm0 ]; then
     fi
 
     # Sign .efi boot files
-    sbctl sign -s /efi/EFI/BOOT/BOOTX64.EFI
-    sbctl sign -s /efi/EFI/systemd/systemd-bootx64.efi
-    sbctl sign -s /efi/EFI/Linux/arch-linux.efi
-    sbctl sign -s /efi/EFI/Linux/arch-linux-fallback.efi
+    sbctl sign -s $ESP/EFI/BOOT/BOOTX64.EFI
+    sbctl sign -s $ESP/EFI/systemd/systemd-bootx64.efi
+    sbctl sign -s $ESP/EFI/Linux/arch-linux.efi
+    sbctl sign -s $ESP/EFI/Linux/arch-linux-fallback.efi
 
     # Secure boot has to be enabled for TPM enrollement to work
     # So we tell cron to run a script doing that on first boot

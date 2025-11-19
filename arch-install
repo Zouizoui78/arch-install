@@ -68,6 +68,7 @@ LUKS_PART_PATH=$(get_disk_partition_path "$DISK" 2)
 LUKS_DEVICE_NAME=cryptlvm
 LVM_GROUP_NAME=volumegroup
 ROOT_PATH=/dev/$LVM_GROUP_NAME/root
+ESP=/boot/efi
 
 echo "Wait while encryption is enabled..."
 
@@ -86,7 +87,7 @@ mkfs.ext4 "$ROOT_PATH"
 mount "$ROOT_PATH" /mnt
 
 mkfs.fat -F 32 "$EFI_PART_PATH"
-mount --mkdir=0700 "$EFI_PART_PATH" /mnt/boot/efi
+mount --mkdir=0700 "$EFI_PART_PATH" /mnt$ESP
 
 pacstrap -K /mnt base linux linux-firmware lvm2 cronie sbctl sudo
 
@@ -99,6 +100,7 @@ arch-chroot /mnt bash -c "/arch-install/chrooted-arch-install \
     $PASSWORD \
     $LUKS_PART_PATH \
     $LUKS_DEVICE_NAME \
-    $ROOT_PATH"
+    $ROOT_PATH \
+    $ESP"
 
 echo "Done ! You can reboot and use the system now."
