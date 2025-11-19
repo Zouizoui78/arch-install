@@ -30,7 +30,7 @@ echo "$PASSWORD" | passwd $USERNAME -s
 echo "$USERNAME ALL=(ALL:ALL) ALL" > /etc/sudoers.d/$USERNAME
 
 # Configure mkinitcpio
-sed -i "s/^HOOK.*$/HOOKS=(base systemd autodetect microcode modconf kms keyboard keymap sd-vconsole block sd-encrypt filesystems fsck)/" /etc/mkinitcpio.conf
+sed -i "s/^HOOK.*$/HOOKS=(base systemd autodetect microcode modconf kms keyboard keymap sd-vconsole block sd-encrypt lvm2 filesystems fsck)/" /etc/mkinitcpio.conf
 
 # Set kernel command line
 LUKS_PART_PATH=$(cryptsetup status cryptlvm | grep device | cut -d ":" -f 2 | xargs)
