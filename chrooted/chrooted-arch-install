@@ -35,7 +35,7 @@ sed -i "s/^HOOK.*$/HOOKS=(base systemd autodetect microcode modconf kms keyboard
 # Set kernel command line
 LUKS_PART_PATH=$(cryptsetup status cryptlvm | grep device | cut -d ":" -f 2 | xargs)
 LUKS_PART_UUID=$(blkid -s UUID -o value $LUKS_PART_PATH)
-echo "rd.luks.name=$LUKS_PART_UUID=cryptlvm rootflags=rw,nodev,noatime" > /etc/kernel/cmdline
+echo "rd.luks.name=$LUKS_PART_UUID=cryptlvm root=/dev/rootgroup/root rootflags=rw,nodev,noatime" > /etc/kernel/cmdline
 
 # Install systemd-boot's efi boot manager
 bootctl install
