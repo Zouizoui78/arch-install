@@ -1,0 +1,9 @@
+[Unit]
+Description=efi partition mounting
+
+[Mount]
+What=%EFI_PART_PATH%
+Where=/efi
+
+[Install]
+WantedBy=multi-user.target

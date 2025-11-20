@@ -10,7 +10,7 @@ PASSWORD=$3
 LUKS_PART_PATH=$4
 LUKS_DEVICE_NAME=$5
 ROOT_PATH=$6
-ESP=$7
+EFI_PART_PATH=$7
 
 cp -r etc /
 
@@ -69,10 +69,10 @@ if [ $? -eq 0 ] && [ -e /dev/tpm0 ]; then
     fi
 
     # Sign .efi boot files
-    sbctl sign -s $ESP/EFI/BOOT/BOOTX64.EFI
-    sbctl sign -s $ESP/EFI/systemd/systemd-bootx64.efi
-    sbctl sign -s $ESP/EFI/Linux/arch-linux.efi
-    sbctl sign -s $ESP/EFI/Linux/arch-linux-fallback.efi
+    sbctl sign -s /efi/EFI/BOOT/BOOTX64.EFI
+    sbctl sign -s /efi/EFI/systemd/systemd-bootx64.efi
+    sbctl sign -s /efi/EFI/Linux/arch-linux.efi
+    sbctl sign -s /efi/EFI/Linux/arch-linux-fallback.efi
 
     # Secure boot has to be enabled for TPM enrollement to work
     # So we tell cron to run a script doing that on first boot
@@ -121,7 +121,10 @@ pacman -Syu --needed --noconfirm $packages
 # Set avahi conf
 sed -i 's/hosts:.*/hosts: mymachines mdns_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/' /etc/nsswitch.conf
 
-systemctl enable avahi-daemon.service bluetooth.service cronie.service cups.socket fstrim.timer NetworkManager.service reflector.timer sddm.service systemd-timesyncd.service
+# Set efi partition automounting conf
+sed -i "s,%EFI_PART_PATH%,$EFI_PART_PATH," /etc/systemd/systemd/efi.mount
+
+systemctl enable avahi-daemon.service bluetooth.service cronie.service cups.socket efi.mount fstrim.timer NetworkManager.service reflector.timer sddm.service systemd-timesyncd.service
 
 echo "On first OS boot, an encryption key will be generated and stored in the TPM.
 A recovery key will also be generated and saved to /home/$USERNAME/luks-recovery-key.txt.
