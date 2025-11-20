@@ -4,6 +4,7 @@ Description=efi partition mounting
 [Mount]
 What=%EFI_PART_PATH%
 Where=/efi
+Options=uid=0,gid=0,fmask=0077,dmask=0077
 
 [Install]
 WantedBy=multi-user.target
