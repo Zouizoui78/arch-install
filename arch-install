@@ -86,7 +86,7 @@ mkfs.ext4 "$ROOT_PATH"
 mount "$ROOT_PATH" /mnt
 
 mkfs.fat -F 32 "$EFI_PART_PATH"
-mount --mkdir "$EFI_PART_PATH" /mnt/efi
+mount --mkdir=0700 "$EFI_PART_PATH" /mnt/efi
 
 pacstrap -K /mnt base linux linux-firmware lvm2 cronie sbctl sudo
 
