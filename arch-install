@@ -59,8 +59,8 @@ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk "$DISK"
     # default - partition number #2
     23 # select "Linux root (x86-64)" partition type
     p # print the in-memory partition table
-    w # write the partition table
-    q # and we're done
+    w # commit the partition table
+    q # quit
 EOF
 
 EFI_PART_PATH=$(get_disk_partition_path "$DISK" 1)
@@ -71,7 +71,7 @@ ROOT_PATH=/dev/$LVM_GROUP_NAME/root
 
 echo "Wait while encryption is enabled..."
 
-# This passphrase will be removed after first boot when enrolling TPM
+# These two passphrases will be removed after first boot when enrolling TPM
 echo -n "passphrase" | cryptsetup luksFormat $LUKS_PART_PATH -
 echo -n "passphrase" | cryptsetup luksAddKey $LUKS_PART_PATH chrooted/luks-key.txt -d -
 cryptsetup open $LUKS_PART_PATH $LUKS_DEVICE_NAME -d chrooted/luks-key.txt
@@ -82,17 +82,18 @@ vgcreate $LVM_GROUP_NAME /dev/mapper/$LUKS_DEVICE_NAME
 lvcreate -l 100%FREE -n root $LVM_GROUP_NAME
 lvreduce -L -256M $LVM_GROUP_NAME/root
 
+# Create and mount filesystems
 mkfs.ext4 "$ROOT_PATH"
 mount "$ROOT_PATH" /mnt
-
 mkfs.fat -F 32 "$EFI_PART_PATH"
 mount --mkdir=0700 "$EFI_PART_PATH" /mnt/efi
 
+# Install system base
 pacstrap -K /mnt base linux linux-firmware lvm2 cronie sbctl sudo
 
+# Run second script in chroot
 cp -r chrooted /mnt/arch-install
 chmod 700 /mnt/arch-install
-
 arch-chroot /mnt bash -c "/arch-install/chrooted-arch-install \
     $HOSTNAME \
     $USERNAME \

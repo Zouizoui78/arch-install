@@ -18,7 +18,4 @@ systemd-cryptenroll "$DEVICE" --unlock-key-file=/arch-install/luks-key.txt --wip
 chown zoui:zoui $RECOVERY_KEY_PATH
 chmod 600 $RECOVERY_KEY_PATH
 
-rm -r /arch-install
-crontab -r
-systemctl disable --now cronie.service
-pacman -Rs --noconfirm cronie
+/arch-install/cleanup

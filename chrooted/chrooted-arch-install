@@ -43,7 +43,7 @@ echo "rd.luks.name=$LUKS_PART_UUID=$LUKS_DEVICE_NAME root=$ROOT_PATH rootflags=r
 # Install systemd-boot's efi boot manager
 bootctl install
 
-# Generate initramfs now because we need the efi files to sign them later with sbctl
+# Generate initramfs now because we need the efi files to sign them with sbctl
 mkinitcpio -P
 
 
@@ -58,12 +58,12 @@ if [ $? -eq 0 ] && [ -e /dev/tpm0 ]; then
     sbctl create-keys
 
     # Enroll secure boot keys
-    # If including firmware certificates (-f) fails,
-    # try without
     set +e
     sbctl enroll-keys -m -f
     ENROLL_RES=$?
     set -e
+    # If including firmware certificates (-f) fails,
+    # try without
     if [ "$ENROLL_RES" -ne 0 ]; then
         sbctl enroll-keys -m
     fi
@@ -72,12 +72,13 @@ if [ $? -eq 0 ] && [ -e /dev/tpm0 ]; then
     sbctl sign -s /efi/EFI/BOOT/BOOTX64.EFI
     sbctl sign -s /efi/EFI/systemd/systemd-bootx64.efi
     sbctl sign -s /efi/EFI/Linux/arch-linux.efi
-    sbctl sign -s /efi/EFI/Linux/arch-linux-fallback.efi
 
     # Secure boot has to be enabled for TPM enrollement to work
     # So we tell cron to run a script doing that on first boot
     echo "@reboot /arch-install/firstboot $LUKS_PART_PATH $USERNAME" | crontab -
 else
+    # If we don't setup secure boot and TPM, just run the cleanup script
+    echo "@reboot /arch-install/cleanup" | crontab -
     echo "Secure boot is not is setup mode, or there is no TPM in the system.
 Skipping secure boot and TPM setup.
 Press Enter to continue..."
@@ -115,6 +116,9 @@ packages="${packages} base-devel git cmake"
 
 # KDE apps
 packages="${packages} ark bluedevil breeze breeze-gtk dolphin drkonqi gwenview kcalc kde-gtk-config kdeplasma-addons kfind kinfocenter konsole kpipewire kscreen kscreenlocker kwallet-pam kwalletmanager kwin kwrite plasma-desktop plasma-nm plasma-pa polkit-kde-agent print-manager sddm-kcm spectacle systemsettings xdg-desktop-portal-kde"
+
+# Strange qt dependencies
+packages="${packages} qt5-wayland qt6-wayland"
 
 pacman -Syu --needed --noconfirm $packages
 
