@@ -1,5 +1,5 @@
 ALL_kver="/boot/vmlinuz-linux"
 PRESETS=('default' 'fallback')
-default_uki="/boot/efi/EFI/Linux/arch-linux.efi"
-fallback_uki="/boot/efi/EFI/Linux/arch-linux-fallback.efi"
+default_uki="/efi/EFI/Linux/arch-linux.efi"
+fallback_uki="/efi/EFI/Linux/arch-linux-fallback.efi"
 fallback_options="-S autodetect"
