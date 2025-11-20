@@ -30,7 +30,7 @@ while ! [[ "$USERNAME" =~ ^([A-Za-z][A-Za-z0-9._-]*)$ ]]; do
 done
 
 read -p $'Password ?\n' -s PASSWORD
-read -p $'Verify password\n' -s PASSWORD_VERIFY
+read -p $'Password again ?\n' -s PASSWORD_VERIFY
 while [ "$PASSWORD" != "$PASSWORD_VERIFY" ]; do
     echo "Passwords do not match"
     read -p $'Password ?\n' -s PASSWORD
