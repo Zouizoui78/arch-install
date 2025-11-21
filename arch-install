@@ -63,8 +63,8 @@ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk "$DISK"
     q # quit
 EOF
 
-EFI_PART_PATH=$(get_disk_partition_path "$DISK" 1)
-LUKS_PART_PATH=$(get_disk_partition_path "$DISK" 2)
+EFI_PART_PATH=$(get_partition_path "$DISK" 1)
+LUKS_PART_PATH=$(get_partition_path "$DISK" 2)
 LUKS_DEVICE_NAME=cryptlvm
 LVM_GROUP_NAME=volumegroup
 ROOT_PATH=/dev/$LVM_GROUP_NAME/root

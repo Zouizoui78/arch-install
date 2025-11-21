@@ -11,10 +11,18 @@ function get_cpu_brand
     lscpu | grep -qe "Model name:.*Intel"
     if [ $? -eq 0 ]; then
         echo "intel"
+        return 0
     fi
+
+    return 1
 }
 
-function get_disk_partition_path
+function get_partition_path
 {
-    echo $(blkid | grep -e "$1.*$2:" | cut -d ":" -f 1)
+    PART=$(blkid | grep -e "$1.*$2:" | cut -d ":" -f 1)
+    if [ -z "$PART" ]; then
+        return 1
+    fi
+    echo "$PART"
+    return 0
 }
