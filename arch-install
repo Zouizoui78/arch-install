@@ -86,7 +86,7 @@ lvreduce -L -256M $LVM_GROUP_NAME/root
 mkfs.ext4 "$ROOT_PATH"
 mount "$ROOT_PATH" /mnt
 mkfs.fat -F 32 "$EFI_PART_PATH"
-mount --mkdir=0700 "$EFI_PART_PATH" /mnt/efi
+mount --mkdir=0700 uid=0,gid=0,fmask=0077,dmask=0077 "$EFI_PART_PATH" /mnt/efi
 
 # Install system base
 pacstrap -K /mnt base linux linux-firmware lvm2 cronie sbctl sudo
