@@ -10,12 +10,13 @@ fi
 set -e
 
 DEVICE=$1
-RECOVERY_KEY_PATH=/home/$2/luks-recovery-key.txt
+USERNAME=$2
+RECOVERY_KEY_PATH=/home/$USERNAME/luks-recovery-key.txt
 
 systemd-cryptenroll "$DEVICE" --unlock-key-file=/arch-install/luks-key.txt --recovery-key > "$RECOVERY_KEY_PATH"
 systemd-cryptenroll "$DEVICE" --unlock-key-file=/arch-install/luks-key.txt --wipe-slot=password --tpm2-device=auto --tpm2-pcrs=7+15:sha256=0000000000000000000000000000000000000000000000000000000000000000
 
-chown zoui:zoui $RECOVERY_KEY_PATH
+chown $USERNAME:$USERNAME $RECOVERY_KEY_PATH
 chmod 600 $RECOVERY_KEY_PATH
 
 /arch-install/cleanup
