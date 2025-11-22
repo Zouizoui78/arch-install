@@ -97,7 +97,7 @@ sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'$(nproc)'"/' /etc/makepkg.conf
 packages="$(get_cpu_brand)-ucode fuse2 htop libdbusmenu-glib man-db man-pages ncdu nvtop p7zip pacman-contrib pyenv reflector rsync screen texinfo unrar unzip vim wget zip"
 
 # networking
-packages="${packages} ethtool networkmanager openssh nmap nss-mdns wireguard-tools"
+packages="${packages} ethtool iw iwd networkmanager openssh nmap nss-mdns wireguard-tools wireless-regdb"
 
 # audio
 packages="${packages} pipewire lib32-pipewire pipewire-audio pipewire-alsa pipewire-pulse pipewire-jack lib32-pipewire-jack wireplumber"
@@ -106,7 +106,7 @@ packages="${packages} pipewire lib32-pipewire pipewire-audio pipewire-alsa pipew
 packages="${packages} noto-fonts noto-fonts-cjk noto-fonts-emoji"
 
 # other apps
-packages="${packages} firefox mpv qbittorrent"
+packages="${packages} firefox keepassxc mpv qbittorrent"
 
 # printers
 packages="${packages} cups system-config-printer"
