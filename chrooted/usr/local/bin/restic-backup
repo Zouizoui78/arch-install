@@ -41,7 +41,7 @@ if [ ! -z "$DRY_RUN" ]; then
     exit 0
 fi
 
-restic --repo "$LOCAL_REPO" forget --prune --keep-within 1m
+restic --repo "$LOCAL_REPO" forget --prune --keep-within 1w
 
 DAY=$(date "+%-d")
 DAYS_IN_MONTH=$(date -d "$(date +%-m)/1 + 1 month - 1 day" "+%-d")
