@@ -14,6 +14,8 @@ export RESTIC_PROGRESS_FPS=0.016666
 LOCAL_REPO=/var/restic-repo
 SNAPSHOT_MOUNTPOINT=/mnt/snapshot
 
+mkdir -p $SNAPSHOT_MOUNTPOINT 
+
 DRY_RUN=""
 if [ $# -eq 1 ] && [ $1 == "--dry-run" ]; then
     DRY_RUN="--dry-run"
