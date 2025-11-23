@@ -1,0 +1,49 @@
+#!/bin/bash
+
+if [[ -n $(pgrep 'restic' | grep 'restic backup') ]]; then
+  echo 'restic is already running...' 1>&2
+  exit 0
+fi
+
+set -euxo pipefail
+
+export RESTIC_PASSWORD_FILE='/etc/keystore/restic.key'
+export RESTIC_CACHE_DIR='/root/.cache/restic'
+export RESTIC_PROGRESS_FPS=0.016666
+
+LOCAL_REPO=/var/restic-repo
+SNAPSHOT_MOUNTPOINT=/mnt/snapshot
+
+DRY_RUN=""
+if [ $# -eq 1 ] && [ $1 == "--dry-run" ]; then
+    DRY_RUN="--dry-run"
+fi
+
+function cleanup {
+    set +e
+    umount $SNAPSHOT_MOUNTPOINT
+    lvremove --force volumegroup/snapvol
+}
+trap cleanup EXIT
+
+lvcreate --extents 100%FREE --snapshot --name snapvol /dev/volumegroup/root
+mount /dev/volumegroup/snapvol $SNAPSHOT_MOUNTPOINT
+
+restic --repo "$LOCAL_REPO" unlock
+
+restic --repo "$LOCAL_REPO" backup $SNAPSHOT_MOUNTPOINT \
+    --tag system --tag scheduled \
+    --one-file-system --skip-if-unchanged --no-scan \
+    $DRY_RUN \
+    --exclude-file=/etc/restic/excludes.txt
+
+if [ ! -z "$DRY_RUN" ]; then
+    exit 0
+fi
+
+restic --repo "$LOCAL_REPO" forget --prune --keep-within 1m
+
+DAY=$(date "+%-d")
+DAYS_IN_MONTH=$(date -d "$(date +%-m)/1 + 1 month - 1 day" "+%-d")
+FRAC="$DAY/$DAYS_IN_MONTH"
+restic --repo "$LOCAL_REPO" check --read-data-subset="$FRAC"

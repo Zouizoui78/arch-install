@@ -1,0 +1,5 @@
+[Unit]
+Description=System backup
+
+[Service]
+ExecStart=/usr/local/bin/restic-backup
