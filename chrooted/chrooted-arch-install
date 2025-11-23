@@ -12,8 +12,7 @@ LUKS_DEVICE_NAME=$5
 ROOT_PATH=$6
 EFI_PART_PATH=$7
 
-cp -r etc /
-cp -r usr /
+cp -r files/* /
 
 # Set timezone
 ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
