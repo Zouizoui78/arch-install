@@ -80,7 +80,7 @@ cryptsetup open $LUKS_PART_PATH $LUKS_DEVICE_NAME -d chrooted/luks-key.txt
 pvcreate /dev/mapper/$LUKS_DEVICE_NAME
 vgcreate $LVM_GROUP_NAME /dev/mapper/$LUKS_DEVICE_NAME
 lvcreate -l 100%FREE -n root $LVM_GROUP_NAME
-lvreduce -L -256M $LVM_GROUP_NAME/root
+lvreduce -l -5%VG $LVM_GROUP_NAME/root
 
 # Create and mount filesystems
 mkfs.ext4 "$ROOT_PATH"
