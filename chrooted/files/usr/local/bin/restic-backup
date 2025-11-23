@@ -44,8 +44,3 @@ if [ ! -z "$DRY_RUN" ]; then
 fi
 
 restic --repo "$LOCAL_REPO" forget --prune --keep-within 1w
-
-DAY=$(date "+%-d")
-DAYS_IN_MONTH=$(date -d "$(date +%-m)/1 + 1 month - 1 day" "+%-d")
-FRAC="$DAY/$DAYS_IN_MONTH"
-restic --repo "$LOCAL_REPO" check --read-data-subset="$FRAC"
