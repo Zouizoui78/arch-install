@@ -11,6 +11,7 @@ LUKS_PART_PATH=$4
 LUKS_DEVICE_NAME=$5
 ROOT_PATH=$6
 EFI_PART_PATH=$7
+BACKUPS_PATH=$8
 
 cp -r files/* /
 
@@ -135,7 +136,7 @@ KEYSTORE_PATH=/etc/keystore
 RESTIC_KEY_PATH=$KEYSTORE_PATH/restic.key
 mkdir --mode 700 $KEYSTORE_PATH
 openssl rand -hex 30 > $RESTIC_KEY_PATH
-restic init --repo /var/restic-repo --password-file $RESTIC_KEY_PATH
+restic init --repo $BACKUPS_PATH --password-file $RESTIC_KEY_PATH
 
 echo "On first OS boot, an encryption key will be generated and stored in the TPM.
 A recovery key will also be generated and saved to /home/$USERNAME/luks-recovery-key.txt.

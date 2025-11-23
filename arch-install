@@ -68,6 +68,8 @@ LUKS_PART_PATH=$(get_partition_path "$DISK" 2)
 LUKS_DEVICE_NAME=cryptlvm
 LVM_GROUP_NAME=volumegroup
 ROOT_PATH=/dev/$LVM_GROUP_NAME/root
+BACKUPS_VOL_PATH=/dev/$LVM_GROUP_NAME/backups
+BACKUPS_PATH=/mnt/backups
 
 echo "Wait while encryption is enabled..."
 
@@ -79,12 +81,14 @@ cryptsetup open $LUKS_PART_PATH $LUKS_DEVICE_NAME -d chrooted/luks-key.txt
 # Setup LVM layer
 pvcreate /dev/mapper/$LUKS_DEVICE_NAME
 vgcreate $LVM_GROUP_NAME /dev/mapper/$LUKS_DEVICE_NAME
-lvcreate -l 100%FREE -n root $LVM_GROUP_NAME
-lvreduce -l -5%VG $LVM_GROUP_NAME/root
+lvcreate -l 90%VG -n root $LVM_GROUP_NAME
+lvcreate -l 9%VG -n backups $LVM_GROUP_NAME
 
 # Create and mount filesystems
 mkfs.ext4 "$ROOT_PATH"
 mount "$ROOT_PATH" /mnt
+mkfs.ext4 "$BACKUPS_VOL_PATH"
+mount --mkdir "$BACKUPS_VOL_PATH" "$BACKUPS_PATH"
 mkfs.fat -F 32 "$EFI_PART_PATH"
 mount --mkdir=0700 -o uid=0,gid=0,fmask=0077,dmask=0077 "$EFI_PART_PATH" /mnt/efi
 
@@ -101,6 +105,7 @@ arch-chroot /mnt bash -c "/arch-install/chrooted-arch-install \
     $LUKS_PART_PATH \
     $LUKS_DEVICE_NAME \
     $ROOT_PATH \
-    $EFI_PART_PATH"
+    $EFI_PART_PATH \
+    $BACKUPS_PATH"
 
 echo "Done ! You can reboot and use the system now."
