@@ -43,4 +43,4 @@ if [ ! -z "$DRY_RUN" ]; then
     exit 0
 fi
 
-restic --repo "$LOCAL_REPO" forget --prune --keep-within 1w
+restic --repo "$LOCAL_REPO" forget --prune --keep-within 1m
