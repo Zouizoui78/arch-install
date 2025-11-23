@@ -1,0 +1,12 @@
+/**/home/*/**/*.pyc
+/**/home/*/**/__pycache__/**
+/**/home/*/**/node_modules/**
+/**/home/*/.cache/**
+/**/home/*/.local/lib/python*/site-packages/**
+/**/home/*/.local/share/Steam/**
+/**/home/*/.mozilla/firefox/*/Cache/**
+/**/root/.cache/restic/
+/**/var/cache/**
+/**/var/cache/pacman/pkg/**
+/**/var/lib/docker/**
+/**/var/lib/libvirt/**

@@ -1,0 +1,9 @@
+[Unit]
+Description=Timer for system backups
+
+[Timer]
+OnCalendar=hourly
+Unit=restic.service
+
+[Install]
+WantedBy=timers.target

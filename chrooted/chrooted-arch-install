@@ -106,7 +106,7 @@ packages="${packages} pipewire lib32-pipewire pipewire-audio pipewire-alsa pipew
 packages="${packages} noto-fonts noto-fonts-cjk noto-fonts-emoji"
 
 # other apps
-packages="${packages} firefox keepassxc mpv qbittorrent"
+packages="${packages} firefox keepassxc mpv qbittorrent restic"
 
 # printers
 packages="${packages} cups system-config-printer"
@@ -129,6 +129,13 @@ sed -i 's/hosts:.*/hosts: mymachines mdns_minimal [NOTFOUND=return] resolve [!UN
 sed -i "s,%EFI_PART_PATH%,$EFI_PART_PATH," /etc/systemd/system/efi.mount
 
 systemctl enable avahi-daemon.service bluetooth.service cronie.service cups.socket efi.mount fstrim.timer NetworkManager.service reflector.timer sddm.service systemd-timesyncd.service
+
+# Setup restic repo
+KEYSTORE_PATH=/etc/keystore
+RESTIC_KEY_PATH=$KEYSTORE_PATH/restic.key
+mkdir --mode 700 $KEYSTORE_PATH
+openssl rand -hex 30 > $RESTIC_KEY_PATH
+restic init --repo /var/restic-repo --password-file $RESTIC_KEY_PATH
 
 echo "On first OS boot, an encryption key will be generated and stored in the TPM.
 A recovery key will also be generated and saved to /home/$USERNAME/luks-recovery-key.txt.
