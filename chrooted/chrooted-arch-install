@@ -128,7 +128,7 @@ sed -i 's/hosts:.*/hosts: mymachines mdns_minimal [NOTFOUND=return] resolve [!UN
 # Set efi partition automounting conf
 sed -i "s,%EFI_PART_PATH%,$EFI_PART_PATH," /etc/systemd/system/efi.mount
 
-systemctl enable avahi-daemon.service bluetooth.service cronie.service cups.socket efi.mount fstrim.timer NetworkManager.service reflector.timer sddm.service systemd-timesyncd.service
+systemctl enable avahi-daemon.service bluetooth.service cronie.service cups.socket efi.mount fstrim.timer NetworkManager.service reflector.timer systemd-timesyncd.service
 
 echo "On first OS boot, an encryption key will be generated and stored in the TPM.
 A recovery key will also be generated and saved to /home/$USERNAME/luks-recovery-key.txt.

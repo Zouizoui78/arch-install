@@ -23,3 +23,6 @@ rm -r /arch-install
 crontab -r
 systemctl disable --now cronie.service
 pacman -Rs --noconfirm cronie
+
+systemctl enable sddm.service
+reboot
