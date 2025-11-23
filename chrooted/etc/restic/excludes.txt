@@ -5,7 +5,7 @@
 /**/home/*/.local/lib/python*/site-packages/**
 /**/home/*/.local/share/Steam/**
 /**/home/*/.mozilla/firefox/*/Cache/**
-/**/root/.cache/restic/
+/**/root/.cache/restic/**
 /**/var/cache/**
 /**/var/cache/pacman/pkg/**
 /**/var/lib/docker/**
