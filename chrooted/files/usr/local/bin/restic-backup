@@ -11,7 +11,7 @@ export RESTIC_PASSWORD_FILE='/etc/keystore/restic.key'
 export RESTIC_CACHE_DIR='/root/.cache/restic'
 export RESTIC_PROGRESS_FPS=0.016666
 
-LOCAL_REPO=/var/restic-repo
+LOCAL_REPO=/mnt/backups
 SNAPSHOT_MOUNTPOINT=/mnt/snapshot
 
 mkdir -p $SNAPSHOT_MOUNTPOINT 
