@@ -126,7 +126,8 @@ pacman -Syu --needed --noconfirm $packages
 sed -i 's/hosts:.*/hosts: mymachines mdns_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns/' /etc/nsswitch.conf
 
 # Set efi partition automounting conf
-sed -i "s,%EFI_PART_PATH%,$EFI_PART_PATH," /etc/systemd/system/efi.mount
+EFI_PART_UUID=$(blkid -s UUID -o value $EFI_PART_PATH)
+sed -i "s,%EFI_PART_UUID%,$EFI_PART_UUID," /etc/systemd/system/efi.mount
 
 systemctl enable avahi-daemon.service bluetooth.service cronie.service cups.socket efi.mount fstrim.timer NetworkManager.service reflector.timer systemd-timesyncd.service
 

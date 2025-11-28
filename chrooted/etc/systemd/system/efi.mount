@@ -2,7 +2,7 @@
 Description=efi partition mounting
 
 [Mount]
-What=%EFI_PART_PATH%
+What=UUID=%EFI_PART_UUID%
 Where=/efi
 Options=uid=0,gid=0,fmask=0077,dmask=0077
 
