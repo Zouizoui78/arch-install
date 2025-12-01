@@ -114,8 +114,11 @@ packages="${packages} cups system-config-printer"
 # dev
 packages="${packages} base-devel git cmake"
 
-# KDE apps
-packages="${packages} ark bluedevil breeze breeze-gtk dolphin drkonqi gwenview kcalc kde-gtk-config kdeplasma-addons kfind kinfocenter konsole kpipewire kscreen kscreenlocker kwallet-pam kwalletmanager kwin kwrite plasma-desktop plasma-nm plasma-pa polkit-kde-agent print-manager sddm-kcm spectacle systemsettings xdg-desktop-portal-kde"
+# KDE
+#packages="${packages} ark bluedevil breeze breeze-gtk dolphin drkonqi gwenview kcalc kde-gtk-config kdeplasma-addons kfind kinfocenter konsole kpipewire kscreen kscreenlocker kwallet-pam kwalletmanager kwin kwrite plasma-desktop plasma-nm plasma-pa polkit-kde-agent print-manager sddm-kcm spectacle systemsettings xdg-desktop-portal-kde"
+
+# gnome
+packages="${packages} gdm gnome-backgrounds gnome-calculator gnome-calendar gnome-clocks gnome-connections gnome-console gnome-control-center gnome-disk-utility gnome-keyring gnome-logs gnome-menus gnome-session gnome-settings-daemon gnome-shell gnome-system-monitor gnome-text-editor gnome-user-share grilo-plugins gvfs gvfs-afc gvfs-dnssd gvfs-goa gvfs-google gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-onedrive gvfs-smb gvfs-wsdd nautilus papers simple-scan xdg-desktop-portal-gnome xdg-user-dirs-gtk"
 
 # Strange qt dependencies
 packages="${packages} qt5-wayland qt6-wayland"
