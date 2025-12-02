@@ -2,7 +2,7 @@
 
 if [[ -n $(pgrep 'restic' | grep 'restic backup') ]]; then
   echo 'restic is already running...' 1>&2
-  exit 0
+  exit 1
 fi
 
 set -euxo pipefail
@@ -11,15 +11,22 @@ export RESTIC_PASSWORD_FILE='/etc/keystore/restic.key'
 export RESTIC_CACHE_DIR='/root/.cache/restic'
 export RESTIC_PROGRESS_FPS=0.016666
 
-LOCAL_REPO=/mnt/backups
+REPO=/mnt/backups
 SNAPSHOT_MOUNTPOINT=/mnt/snapshot
 
-mkdir -p $SNAPSHOT_MOUNTPOINT 
+mkdir -p $SNAPSHOT_MOUNTPOINT
 
 DRY_RUN=""
-if [ $# -eq 1 ] && [ $1 == "--dry-run" ]; then
-    DRY_RUN="--dry-run"
-fi
+TAGS=""
+
+while [ $# -gt 0 ]; do
+    if [ "$1" == "--dry-run" ]; then
+        DRY_RUN="--dry-run"
+    else
+        TAGS="$1"
+    fi
+    shift
+done
 
 function cleanup {
     set +e
@@ -31,10 +38,10 @@ trap cleanup EXIT
 lvcreate --extents 100%FREE --snapshot --name snapvol /dev/volumegroup/root
 mount /dev/volumegroup/snapvol $SNAPSHOT_MOUNTPOINT
 
-restic --repo "$LOCAL_REPO" unlock
+restic --repo "$REPO" unlock
 
-restic --repo "$LOCAL_REPO" backup $SNAPSHOT_MOUNTPOINT \
-    --tag system --tag scheduled \
+restic --repo "$REPO" backup $SNAPSHOT_MOUNTPOINT \
+    --tag system --tag "$TAGS" \
     --one-file-system --skip-if-unchanged --no-scan \
     $DRY_RUN \
     --exclude-file=/etc/restic/excludes.txt
@@ -43,4 +50,4 @@ if [ ! -z "$DRY_RUN" ]; then
     exit 0
 fi
 
-restic --repo "$LOCAL_REPO" forget --prune --keep-within 1m
+restic --repo "$REPO" forget --prune --keep-within 1m
