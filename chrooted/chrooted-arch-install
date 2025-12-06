@@ -94,7 +94,7 @@ sed -i "s/#\[multilib\]/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /e
 sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'$(nproc)'"/' /etc/makepkg.conf
 
 # base
-packages="$(get_cpu_brand)-ucode fuse2 htop libdbusmenu-glib man-db man-pages ncdu nvtop p7zip pacman-contrib pyenv reflector rsync screen texinfo unrar unzip vim wget zip"
+packages="$(get_cpu_brand)-ucode bash-completion fuse2 htop libdbusmenu-glib man-db man-pages ncdu nvtop p7zip pacman-contrib pyenv reflector rsync screen texinfo unrar unzip vim wget zip"
 
 # networking
 packages="${packages} ethtool iw iwd networkmanager openssh nmap nss-mdns wireguard-tools wireless-regdb"
