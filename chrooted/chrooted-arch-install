@@ -92,6 +92,7 @@ sed -i "s/#\[multilib\]/\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist/" /e
 
 # Use all available cores for aur packages compilation
 sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'$(nproc)'"/' /etc/makepkg.conf
+sed -i 's/purge debug lto/purge !debug lto' /etc/makepkg.conf
 
 # base
 packages="$(get_cpu_brand)-ucode bash-completion fuse2 htop libdbusmenu-glib man-db man-pages ncdu nvtop p7zip pacman-contrib pyenv reflector rsync screen texinfo unrar unzip vim wget zip"
