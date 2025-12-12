@@ -27,6 +27,9 @@ locale-gen
 # Set hostname
 echo $HOSTNAME > /etc/hostname
 
+# Lock root password
+passwd --lock root
+
 # Create user account
 # See groups here https://wiki.archlinux.org/title/Users_and_groups#User_groups
 useradd -m $USERNAME --groups adm,log,rfkill,sys,wheel
