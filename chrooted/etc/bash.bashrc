@@ -19,6 +19,7 @@ alias sudo='sudo '
 alias ls='ls -AxF --color --group-directories-first'
 alias ll='ls -lh --time-style=long-iso'
 alias grep='grep -s --color=auto'
+alias r='ranger --clean'
 
 export EDITOR=vim
 export HISTSIZE=
