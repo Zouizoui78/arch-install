@@ -15,6 +15,7 @@ if [[ -r /usr/share/bash-completion/bash_completion ]]; then
   . /usr/share/bash-completion/bash_completion
 fi
 
+alias sudo='sudo '
 alias ls='ls -AxF --color --group-directories-first'
 alias ll='ls -lh --time-style=long-iso'
 alias grep='grep -s --color=auto'
